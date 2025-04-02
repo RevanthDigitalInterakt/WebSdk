@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }).then(() => {
         // set the log level during sitemap development to see potential problems
         console.log('Salesforce Interactions WEB SDK is ready');
-        SalesforceInteractions.setLoggingLevel('DEBUG');
+        SalesforceInteractions.setLoggingLevel('0');
 
 
         let href = window.location.href;
