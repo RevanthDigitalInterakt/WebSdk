@@ -461,43 +461,48 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                 }),                
 
-                // listener("click", ".continueBtn.ng-star-inserted", (event) => {
-                //     // Fetch the phone number and country code
+               //login with password
+                listener("click","continueBtn",(event)=>{
+                    console.log("entered login with password");
 
-                //     console.log("entered login event");
-                //     let phoneNumber = document.querySelector("#phone").value;
-                //     console.log(phoneNumber);
-                //     let countryCode = document.querySelector("#country-code").value;
-                //     console.log(countryCode);
+                    let phoneNumber = document.querySelector("#phone").value.trim();
+                    console.log("Phone Number:", phoneNumber);
+                
+                    let countryCode = document.querySelector("#country-code").value.trim();
+                    console.log("Country Code:", countryCode);
+                
+                    // Country code mapping
+                    let countryCodeMap = {
+                        "91": "IN",
+                        "971": "AE"
+                    };
+                
+                    // Extract country abbreviation using the map
+                    let country = countryCodeMap[countryCode] || "";
+                    console.log("Country:", country);
+                
+                    // Combine country code and phone number (without + and space)
+                    let mobilenumber_code = `${countryCode}${phoneNumber}`;
+                    console.log("Full Mobile Number:", mobilenumber_code);
+                
+                    // Send event to Salesforce
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: "Login",
+                        },
+                        user: {
+                            attributes: {
+                                phoneNumber: mobilenumber_code,  // Example: 919876543210
+                                eventType: 'contactPointPhone',
+                                sourceLocale: country,  // Example: IN
+                            },
+                        },
+                    });
+                    
+                }),
 
 
-                //     let countrycodemap = {
-                //         "91": "IN",
-                //         "971": "AE"
-                //     }
 
-
-                //     //extract the IN using map
-                //     let country = countrycodemap[countryCode] || "";
-                //     console.log("Country:", country);
-
-
-                //     mobilenumber_code = `${countryCode}${phoneNumber}`
-                //     console.log(mobilenumber_code);
-                //     SalesforceInteractions.sendEvent({
-                //         interaction: {
-                //             name: "Login",
-                //         },
-                //         user: {
-                //             attributes: {
-                //                 phoneNumber: mobilenumber_code,
-                //                 eventType: 'contactPointPhone',
-                //                 sourceLocale: country,
-                //             },
-                //         },
-                //     });
-
-                // }),
 
                 listener("click", ".heroSection_prdrankbtn__oLW5s", (event) => {
                     console.log("Predict rank button clicked");
