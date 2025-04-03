@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }).then(() => {
         // set the log level during sitemap development to see potential problems
-        console.log('Salesforce Interactions WEB SDK is ready');
+        console.log('Salesforce Interactions WEB SDK is  is ready');
         SalesforceInteractions.setLoggingLevel('DEBUG');
 
 
@@ -288,11 +288,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             SalesforceInteractions.sendEvent({
                 interaction: {
-                    name: 'Registration form', 
+                    name: 'Registration form',
                     eventType: 'CustomEvent',
-                    attributes: { 
+                    attributes: {
                         TimeSlot: selectedTimeSlot,
-                         SchoolName: schoolName
+                        SchoolName: schoolName
                     }
                 }
             });
@@ -315,23 +315,23 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Pin Code:", pinCode);
 
             SalesforceInteractions.sendEvent({
-                    interaction: {
-                        name: "Registration Form",
+                interaction: {
+                    name: "Registration Form",
+                },
+                user: {
+                    attributes: {
+                        stateProvince: state,
+                        city: city,
+                        district: district,
+                        postalCode: pinCode,
+                        eventType: 'identity',
+                        isAnonymous: '0',
+
                     },
-                    user: { 
-                        attributes: {
-                            stateProvince: state,
-                            city:city,
-                            district:district,
-                            postalCode:pinCode,
-                            eventType: 'identity',
-                            isAnonymous: '0',
+                }
+            });
 
-                        },
-                    }
-                });
 
-            
 
         }
 
@@ -397,7 +397,7 @@ document.addEventListener("DOMContentLoaded", function () {
             CatalogObjectInteractionName,
         } = SalesforceInteractions
 
-      
+
 
         const global = {
             listeners: [
@@ -421,39 +421,83 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // login with otp
 
+
                 listener("click", ".continueBtn.ng-star-inserted", (event) => {
-                    // Fetch the phone number and country code
-                    let phoneNumber = document.querySelector("#phone").value;
-                    let countryCode = document.querySelector("#country-code").value;
-                    console.log(countryCode);
-
-
-                    let countrycodemap={
+                    console.log("Entered login event");
+                
+                    // Fetch and trim phone number and country code
+                    let phoneNumber = document.querySelector("#phone").value.trim();
+                    console.log("Phone Number:", phoneNumber);
+                
+                    let countryCode = document.querySelector("#country-code").value.trim();
+                    console.log("Country Code:", countryCode);
+                
+                    // Country code mapping
+                    let countryCodeMap = {
                         "91": "IN",
-                        "971":"AE"
-                    }
-
-
-                    //extract the IN using map
-                    country=countrycodemap[countryCode]||"";
-                    console.log(country);
-
-                    mobilenumber_code=`${countryCode}${phoneNumber}`
-                    console.log(mobilenumber_code);
+                        "971": "AE"
+                    };
+                
+                    // Extract country abbreviation using the map
+                    let country = countryCodeMap[countryCode] || "";
+                    console.log("Country:", country);
+                
+                    // Combine country code and phone number (without + and space)
+                    let mobilenumber_code = `${countryCode}${phoneNumber}`;
+                    console.log("Full Mobile Number:", mobilenumber_code);
+                
+                    // Send event to Salesforce
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: "Login",
                         },
                         user: {
                             attributes: {
-                                phoneNumber: mobilenumber_code,
+                                phoneNumber: mobilenumber_code,  // Example: 919876543210
                                 eventType: 'contactPointPhone',
-                                sourceLocale:country,
+                                sourceLocale: country,  // Example: IN
                             },
                         },
                     });
+                }),                
 
-                }),
+                // listener("click", ".continueBtn.ng-star-inserted", (event) => {
+                //     // Fetch the phone number and country code
+
+                //     console.log("entered login event");
+                //     let phoneNumber = document.querySelector("#phone").value;
+                //     console.log(phoneNumber);
+                //     let countryCode = document.querySelector("#country-code").value;
+                //     console.log(countryCode);
+
+
+                //     let countrycodemap = {
+                //         "91": "IN",
+                //         "971": "AE"
+                //     }
+
+
+                //     //extract the IN using map
+                //     let country = countrycodemap[countryCode] || "";
+                //     console.log("Country:", country);
+
+
+                //     mobilenumber_code = `${countryCode}${phoneNumber}`
+                //     console.log(mobilenumber_code);
+                //     SalesforceInteractions.sendEvent({
+                //         interaction: {
+                //             name: "Login",
+                //         },
+                //         user: {
+                //             attributes: {
+                //                 phoneNumber: mobilenumber_code,
+                //                 eventType: 'contactPointPhone',
+                //                 sourceLocale: country,
+                //             },
+                //         },
+                //     });
+
+                // }),
 
                 listener("click", ".heroSection_prdrankbtn__oLW5s", (event) => {
                     console.log("Predict rank button clicked");
@@ -1491,7 +1535,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     quantity: 1,  // Keep this as a number, not a string
                                     price: parseFloat(packagePrice),  // Ensure this is correctly formatted
                                     currency: currency,  // Keep currency as a string
-                                    
+
                                 }
                             }
                         });
@@ -1742,7 +1786,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         });
 
                         //check this send event 
-                        
+
                         SalesforceInteractions.sendEvent({
                             interaction: {
                                 name: 'checkout',
@@ -1832,7 +1876,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-     
+
 
 
         const PaymentCapture = {
@@ -1980,8 +2024,8 @@ document.addEventListener("DOMContentLoaded", function () {
             name: 'DoubtsPage',
             isMatch: () => /\/doubts/.test(window.location.href),
 
-            listeners: [           
-           
+            listeners: [
+
                 listener("click", ".subject-option", (event) => {
                     // Only proceed if the clicked element is a subject option
                     const clickedOption = event.target.closest('.subject-option');
@@ -2026,7 +2070,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 }),
 
-            
+
             ]
         };
 
