@@ -424,7 +424,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 listener("click", ".continueBtn.ng-star-inserted", (event) => {
                     console.log("Entered login event");
-                
+                   // event.stopImmediatePropagation();
                     // Fetch and trim phone number and country code
                     let phoneNumber = document.querySelector("#phone").value.trim();
                     console.log("Phone Number:", phoneNumber);
@@ -505,7 +505,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 listener("click", ".continueBtn", (event) => {
                     console.log("Entered login with password");
-                    event.preventDefault(); // Prevent default action
+                    event.preventDefault(); 
                 
                     let phoneNumber = document.querySelector("#phone").value.trim();
                     console.log("Phone Number:", phoneNumber);
@@ -530,12 +530,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Send event to Salesforce
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Login",
+                            name: "Login With Password",
                         },
                         user: {
                             attributes: {
                                 phoneNumber: mobilenumber_code,  // Example: 919876543210
-                                eventType: 'contactPointPhone',
+                                eventType: 'loginWithPassword',
                                 sourceLocale: country,  // Example: IN
                             },
                         },
