@@ -419,20 +419,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+                // login with otp
 
                 listener("click", ".continueBtn.ng-star-inserted", (event) => {
                     // Fetch the phone number and country code
                     let phoneNumber = document.querySelector("#phone").value;
+                    let countryCode = document.querySelector("#country-code").value;
+                    console.log(countryCode);
 
 
+                    let countrycodemap={
+                        "91": "IN",
+                        "971":"AE"
+                    }
+
+
+                    //extract the IN using map
+                    country=countrycodemap[countryCode]||"";
+                    console.log(country);
+
+                    mobilenumber_code=`${countryCode}${phoneNumber}`
+                    console.log(mobilenumber_code);
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Sign in",
+                            name: "Login",
                         },
                         user: {
                             attributes: {
-                                phoneNumber: phoneNumber,
+                                phoneNumber: mobilenumber_code,
                                 eventType: 'contactPointPhone',
+                                sourceLocale:country,
                             },
                         },
                     });
