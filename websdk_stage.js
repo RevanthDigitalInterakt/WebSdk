@@ -921,6 +921,39 @@ document.addEventListener("DOMContentLoaded", function () {
             ]
         };
 
+
+        const ViewReportPage = {
+            name: 'ViewReportPage',
+            isMatch: () => /\/viewtestreport/.test(window.location.href),
+
+            listeners: [
+               listener("click",".btn.UNFAPP-asmnt-blue-hdrbtn.ng-star-inserted",(event)=>{
+                console.log("in view test report page");
+
+                const examContainer=document.querySelector('.UNFAPP-hdng.UNFAPP-main-hdng');
+                const examName=examContainer?examContainer.textContent.trim():"";
+                
+
+                SalesforceInteractions.sendEvent({
+                    interaction: {
+                        name: 'View Solutions',
+                        eventType: 'CustomEvent',
+                        attributes: {
+                            ExamName: examName,
+                        },
+                    },
+                });
+                
+
+
+
+               })
+
+
+            ]
+        };
+
+
         const homepage = {
 
             name: 'homepage',

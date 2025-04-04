@@ -1100,6 +1100,13 @@
           "isCurrencyIsoCode": false
         },
         {
+          "masterLabel": "examName",
+          "dataType": "Text",
+          "developerName": "attributesExamName",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
           "masterLabel": "subjectAttribute",
           "dataType": "Text",
           "developerName": "attributesSubject",
