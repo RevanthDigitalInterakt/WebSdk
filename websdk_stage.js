@@ -526,7 +526,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: 'Log out',
-                            eventType: 'logOut',
+                            eventType: 'logout',
                             attributes: {
                             },
                         },
