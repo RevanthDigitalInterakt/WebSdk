@@ -68,6 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const stuexamName = examNameElement ? examNameElement.textContent.trim() : 'Exam name not found';
 
                 console.log("Exam Name:", stuexamName);
+                sessionStorage.setItem("ExamName", stuexamName);
                 const elements = document.querySelectorAll('.UNFAPP-cunt.UNFAPP-elips');
                 console.log("Checking elements for View Report");
 
@@ -424,28 +425,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 listener("click", ".continueBtn.ng-star-inserted", (event) => {
                     console.log("Entered login event");
-                   // event.stopImmediatePropagation();
+                    // event.stopImmediatePropagation();
                     // Fetch and trim phone number and country code
                     let phoneNumber = document.querySelector("#phone").value.trim();
                     console.log("Phone Number:", phoneNumber);
-                
+
                     let countryCode = document.querySelector("#country-code").value.trim();
                     console.log("Country Code:", countryCode);
-                
+
                     // Country code mapping
                     let countryCodeMap = {
                         "91": "IN",
                         "971": "AE"
                     };
-                
+
                     // Extract country abbreviation using the map
                     let country = countryCodeMap[countryCode] || "";
                     console.log("Country:", country);
-                
+
                     // Combine country code and phone number (without + and space)
                     let mobilenumber_code = `${countryCode}${phoneNumber}`;
                     console.log("Full Mobile Number:", mobilenumber_code);
-                
+
                     // Send event to Salesforce
                     SalesforceInteractions.sendEvent({
                         interaction: {
@@ -459,35 +460,35 @@ document.addEventListener("DOMContentLoaded", function () {
                             },
                         },
                     });
-                }),                
+                }),
 
-               //login with password
+                //login with password
 
 
                 // listener("click", ".continueBtn", (event) => {
                 //     console.log("Entered login with password");
                 //     event.preventDefault(); 
-                
+
                 //     let phoneNumber = document.querySelector("#phone").value.trim();
                 //     console.log("Phone Number:", phoneNumber);
-                
+
                 //     let countryCode = document.querySelector("#country-code").value.trim();
                 //     console.log("Country Code:", countryCode);
-                
+
                 //     // Country code mapping
                 //     let countryCodeMap = {
                 //         "91": "IN",
                 //         "971": "AE"
                 //     };
-                
+
                 //     // Extract country abbreviation using the map
                 //     let country = countryCodeMap[countryCode] || "";
                 //     console.log("Country:", country);
-                
+
                 //     // Combine country code and phone number (without + and space)
                 //     let mobilenumber_code = `${countryCode}${phoneNumber}`;
                 //     console.log("Full Mobile Number:", mobilenumber_code);
-                
+
                 //     // Send event to Salesforce
                 //     SalesforceInteractions.sendEvent({
                 //         interaction: {
@@ -505,7 +506,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 //forgot password
-                listener("click",".forgetPassword",(event)=>{
+                
+                
+                
+                listener("click", ".forgetPassword", (event) => {
                     console.log("in forgot password");
 
                     SalesforceInteractions.sendEvent({
@@ -520,7 +524,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 //logout
 
-                listener("click",".dropdown-item",(event)=>{
+                listener("click", ".dropdown-item", (event) => {
                     console.log("in log out");
 
                     SalesforceInteractions.sendEvent({
@@ -532,7 +536,32 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
                     });
                 }),
-                
+
+
+                //view solution due to angular issue writing here
+
+
+                listener("click", ".btn.UNFAPP-asmnt-blue-hdrbtn.ng-star-inserted", (event) => {
+                    console.log("In view test report page");
+
+                   
+                       // const examContainer = document.querySelector("h3.UNFAPP-hdng.UNFAPP-main-hdng");
+                        const examName =  sessionStorage.getItem("ExamName") || "Unknown Test";
+
+                        console.log("Captured Exam Name:", examName);
+
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: 'View Solutions',
+                                eventType: 'CustomEvent',
+                                attributes: {
+                                    ExamName: examName,
+                                },
+                            },
+                        });
+                    
+                }),
+
 
                 listener("click", ".heroSection_prdrankbtn__oLW5s", (event) => {
                     console.log("Predict rank button clicked");
@@ -922,36 +951,15 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
 
-        const ViewReportPage = {
-            name: 'ViewReportPage',
-            isMatch: () => /\/viewtestreport/.test(window.location.href),
+        // const ViewReportPage = {
+        //     name: 'ViewReportPage',
+        //     isMatch: () => /\/viewtestreport/.test(window.location.href),
 
-            listeners: [
-               listener("click",".btn.UNFAPP-asmnt-blue-hdrbtn.ng-star-inserted",(event)=>{
-                console.log("in view test report page");
-
-                const examContainer=document.querySelector('.UNFAPP-hdng.UNFAPP-main-hdng');
-                const examName=examContainer?examContainer.textContent.trim():"";
+        //     listeners: [
                 
 
-                SalesforceInteractions.sendEvent({
-                    interaction: {
-                        name: 'View Solutions',
-                        eventType: 'CustomEvent',
-                        attributes: {
-                            ExamName: examName,
-                        },
-                    },
-                });
-                
-
-
-
-               })
-
-
-            ]
-        };
+        //     ]
+        // };
 
 
         const homepage = {
@@ -1219,37 +1227,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.log("Course name could not be found.");
                     }
                 }),
-                // Add an event listener for the button click
-                // listener("click", ".slt_grbtn", (event) => {
-                //     // Capture the grade text within the clicked button
-                //     const gradeText = event.currentTarget.textContent.trim();
-                //     const storedCourse = sessionStorage.getItem("selectedCourse");
-
-                //     if (gradeText && storedCourse) {
-                //         console.log("Selected Grade:", gradeText);
-                //         console.log("selected course:", storedCourse);
-
-                //         SalesforceInteractions.sendEvent({
-                //             interaction: {
-                //                 name: 'Gradeee',
-                //                 eventType: 'CustomEvent',
-                //             },
-
-                //             attributes: {
-                //                 Grade1: gradeText,
-                //                 CourseType1: storedCourse,
-
-                //             },
-
-                //         });
-
-
-                //     } else {
-                //         console.log("Grade text could not be found.");
-                //     }
-                // }),
-
-
+               
             ]
         }
 
@@ -1453,108 +1431,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
         };
 
-        // const Registration = {
-        //     name: 'Registration',
-        //     isMatch: () => /\/score/.test(window.location.href),
-        //     listeners: [
-        //         listener("click", ".heroSection_prdrankbtn__pWFpU", (event) => {
-        //             console.log("Submit button clicked!");
-
-
-        //             const form = event.currentTarget.closest("form"); // Get the closest form
-
-
-        //             let formData = new FormData(form);
-        //             let data = {};
-
-        //             // Convert form data to JSON
-        //             formData.forEach((value, key) => {
-        //                 data[key] = value;
-        //             });
-
-        //             // Capture values from the form
-        //             const namee = data.name || null;
-        //             const emaill = data.email || null;
-        //             const mobilenumber = data.mobile || null;
-        //             const selectedGrade = data.grade || null;
-        //             const activeOption = document.querySelector('.heroSection_optionname_active__4mEMT')?.textContent.trim() || null;
-
-        //             // Send event for mobile number
-        //             if (mobilenumber) {
-        //                 SalesforceInteractions.sendEvent({
-        //                     interaction: {
-        //                         name: 'Phone Captured',
-        //                     },
-        //                     user: {
-        //                         attributes: {
-        //                             phoneNumber: mobilenumber,
-        //                             eventType: 'contactPointPhone',
-        //                         },
-        //                     },
-        //                 });
-        //             }
-
-        //             // Send event for name
-        //             if (namee) {
-        //                 SalesforceInteractions.sendEvent({
-        //                     interaction: {
-        //                         name: 'Name Captured',
-        //                     },
-        //                     user: {
-        //                         attributes: {
-        //                             firstName: namee,
-        //                             eventType: 'identity',
-        //                             isAnonymous: '0',
-        //                         },
-        //                     },
-        //                 });
-        //             }
-
-        //             // Send event for email
-        //             if (emaill) {
-        //                 SalesforceInteractions.sendEvent({
-        //                     interaction: {
-        //                         name: 'Email Captured',
-        //                     },
-        //                     user: {
-        //                         attributes: {
-        //                             email: emaill,
-        //                             eventType: 'contactPointEmail',
-        //                         },
-        //                     },
-        //                 });
-        //             }
-
-        //             // Send event for grade and active option
-        //             if (selectedGrade || activeOption) {
-        //                 SalesforceInteractions.sendEvent({
-        //                     interaction: {
-        //                         name: 'Registration Details Captured',
-        //                         eventType: 'CustomEvent',
-        //                     },
-        //                     attributes: {
-        //                         Grade1: selectedGrade || null,
-        //                         ActiveOption: activeOption || null,
-        //                     },
-        //                 });
-        //             }
-
-        //             // Log the captured data for debugging
-        //             console.log(`Captured Registration Data:`, {
-        //                 name: namee,
-        //                 email: emaill,
-        //                 mobile: mobilenumber,
-        //                 grade: selectedGrade,
-        //                 activeOption: activeOption,
-        //             });
-
-
-        //         }),
-
-
-        //     ],
-        // };
-
+      
 
         let selectedPaymentMethod = "UPI"; // Default selection when landing on the page
 
@@ -2000,9 +1877,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                             }
                         });
-
-
-
                         PaymentCapture.disconnectObserver();
                         return;
                     }
@@ -2146,7 +2020,7 @@ document.addEventListener("DOMContentLoaded", function () {
         SalesforceInteractions.initSitemap({
             global,
             pageTypeDefault,
-            pageTypes: [ReportPage, RegistrationSuccessful123, homepage, StudentPage, Subscription, PaymentCapture, DoubtsPage]
+            pageTypes: [ReportPage,RegistrationSuccessful123, homepage, StudentPage, Subscription, PaymentCapture, DoubtsPage]
         })
 
     });
