@@ -462,44 +462,46 @@ document.addEventListener("DOMContentLoaded", function () {
                 }),                
 
                //login with password
-                listener("click", ".continueBtn", (event) => {
-                    console.log("Entered login with password");
-                    event.preventDefault(); 
+
+
+                // listener("click", ".continueBtn", (event) => {
+                //     console.log("Entered login with password");
+                //     event.preventDefault(); 
                 
-                    let phoneNumber = document.querySelector("#phone").value.trim();
-                    console.log("Phone Number:", phoneNumber);
+                //     let phoneNumber = document.querySelector("#phone").value.trim();
+                //     console.log("Phone Number:", phoneNumber);
                 
-                    let countryCode = document.querySelector("#country-code").value.trim();
-                    console.log("Country Code:", countryCode);
+                //     let countryCode = document.querySelector("#country-code").value.trim();
+                //     console.log("Country Code:", countryCode);
                 
-                    // Country code mapping
-                    let countryCodeMap = {
-                        "91": "IN",
-                        "971": "AE"
-                    };
+                //     // Country code mapping
+                //     let countryCodeMap = {
+                //         "91": "IN",
+                //         "971": "AE"
+                //     };
                 
-                    // Extract country abbreviation using the map
-                    let country = countryCodeMap[countryCode] || "";
-                    console.log("Country:", country);
+                //     // Extract country abbreviation using the map
+                //     let country = countryCodeMap[countryCode] || "";
+                //     console.log("Country:", country);
                 
-                    // Combine country code and phone number (without + and space)
-                    let mobilenumber_code = `${countryCode}${phoneNumber}`;
-                    console.log("Full Mobile Number:", mobilenumber_code);
+                //     // Combine country code and phone number (without + and space)
+                //     let mobilenumber_code = `${countryCode}${phoneNumber}`;
+                //     console.log("Full Mobile Number:", mobilenumber_code);
                 
-                    // Send event to Salesforce
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: "Login With Password",
-                        },
-                        user: {
-                            attributes: {
-                                phoneNumber: mobilenumber_code,  // Example: 919876543210
-                                eventType: 'loginWithPassword',
-                                sourceLocale: country,  // Example: IN
-                            },
-                        },
-                    });
-                }),
+                //     // Send event to Salesforce
+                //     SalesforceInteractions.sendEvent({
+                //         interaction: {
+                //             name: "Login With Password",
+                //         },
+                //         user: {
+                //             attributes: {
+                //                 phoneNumber: mobilenumber_code,  // Example: 919876543210
+                //                 eventType: 'loginWithPassword',
+                //                 sourceLocale: country,  // Example: IN
+                //             },
+                //         },
+                //     });
+                // }),
 
 
                 //forgot password
