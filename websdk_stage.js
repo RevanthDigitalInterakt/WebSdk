@@ -517,6 +517,21 @@ document.addEventListener("DOMContentLoaded", function () {
                         },
                     });
                 }),
+
+                //logout
+
+                listener("click",".dropdown-item",(event)=>{
+                    console.log("in log out");
+
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: 'Log out',
+                            eventType: 'logOut',
+                            attributes: {
+                            },
+                        },
+                    });
+                }),
                 
 
                 listener("click", ".heroSection_prdrankbtn__oLW5s", (event) => {

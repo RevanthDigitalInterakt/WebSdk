@@ -954,112 +954,6 @@
       "streamingAppLabel": "Infinity_Stage_Website"
     },
     {
-      "developerName": "loginWithPassword",
-      "masterLabel": "Login With Password",
-      "category": "Profile",
-      "availabilityStatus": "INUSE",
-      "externalDataTranFields": [
-        {
-          "masterLabel": "category",
-          "dataType": "Text",
-          "developerName": "category",
-          "isDataRequired": true,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "dateTime",
-          "dataType": "DateTime",
-          "developerName": "dateTime",
-          "isDataRequired": true,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "deviceId",
-          "dataType": "Text",
-          "developerName": "deviceId",
-          "isDataRequired": true,
-          "primaryIndexOrder": 1,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "eventId",
-          "dataType": "Text",
-          "developerName": "eventId",
-          "isDataRequired": true,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "eventType",
-          "dataType": "Text",
-          "developerName": "eventType",
-          "isDataRequired": true,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "pageView",
-          "dataType": "Number",
-          "developerName": "pageView",
-          "isDataRequired": false,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "sourceUrlReferrer",
-          "dataType": "Text",
-          "developerName": "sourceUrlReferrer",
-          "isDataRequired": false,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "sessionId",
-          "dataType": "Text",
-          "developerName": "sessionId",
-          "isDataRequired": true,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "sourceChannel",
-          "dataType": "Text",
-          "developerName": "sourceChannel",
-          "isDataRequired": false,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "sourceLocale",
-          "dataType": "Text",
-          "developerName": "sourceLocale",
-          "isDataRequired": false,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "sourcePageType",
-          "dataType": "Text",
-          "developerName": "sourcePageType",
-          "isDataRequired": false,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "sourceUrl",
-          "dataType": "Text",
-          "developerName": "sourceUrl",
-          "isDataRequired": false,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "phoneNumber",
-          "dataType": "Text",
-          "developerName": "phoneNumber",
-          "isDataRequired": true,
-          "isCurrencyIsoCode": false
-        }
-      ],
-      "fieldCount": 13,
-      "availabilityStatusLabel": {
-        "label": "In Use",
-        "rawValue": "INUSE"
-      },
-      "streamingAppLabel": "Infinity_Stage_Website"
-    },
-    {
       "developerName": "CustomEvent",
       "masterLabel": "Custom Event",
       "category": "Engagement",
@@ -1320,6 +1214,134 @@
       "streamingAppLabel": "Infinity_Stage_Website"
     },
     {
+      "developerName": "forgot",
+      "masterLabel": "Forgot Password",
+      "category": "Engagement",
+      "availabilityStatus": "INUSE",
+      "externalDataTranFields": [
+        {
+          "masterLabel": "category",
+          "dataType": "Text",
+          "developerName": "category",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "dateTime",
+          "dataType": "DateTime",
+          "developerName": "dateTime",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "deviceId",
+          "dataType": "Text",
+          "developerName": "deviceId",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "sessionId",
+          "dataType": "Text",
+          "developerName": "sessionId",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "eventType",
+          "dataType": "Text",
+          "developerName": "eventType",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "interactionName",
+          "dataType": "Text",
+          "developerName": "interactionName",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "eventId",
+          "dataType": "Text",
+          "developerName": "eventId",
+          "isDataRequired": true,
+          "primaryIndexOrder": 1,
+          "isCurrencyIsoCode": false
+        }
+      ],
+      "fieldCount": 7,
+      "availabilityStatusLabel": {
+        "label": "In Use",
+        "rawValue": "INUSE"
+      },
+      "streamingAppLabel": "Infinity_Stage_Website"
+    },
+    {
+      "developerName": "logout",
+      "masterLabel": "Logout",
+      "category": "Engagement",
+      "availabilityStatus": "INUSE",
+      "externalDataTranFields": [
+        {
+          "masterLabel": "category",
+          "dataType": "Text",
+          "developerName": "category",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "dateTime",
+          "dataType": "DateTime",
+          "developerName": "dateTime",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "deviceId",
+          "dataType": "Text",
+          "developerName": "deviceId",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "sessionId",
+          "dataType": "Text",
+          "developerName": "sessionId",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "eventType",
+          "dataType": "Text",
+          "developerName": "eventType",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "interactionName",
+          "dataType": "Text",
+          "developerName": "interactionName",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "eventId",
+          "dataType": "Text",
+          "developerName": "eventId",
+          "isDataRequired": true,
+          "primaryIndexOrder": 1,
+          "isCurrencyIsoCode": false
+        }
+      ],
+      "fieldCount": 7,
+      "availabilityStatusLabel": {
+        "label": "In Use",
+        "rawValue": "INUSE"
+      },
+      "streamingAppLabel": "Infinity_Stage_Website"
+    },
+    {
       "developerName": "identity",
       "masterLabel": "Identity",
       "category": "Profile",
@@ -1520,6 +1542,112 @@
       "availabilityStatusLabel": {
         "label": "In Use",
         "rawValue": "INUSE"
+      },
+      "streamingAppLabel": "Infinity_Stage_Website"
+    },
+    {
+      "developerName": "loginWithPassword",
+      "masterLabel": "Login With Password",
+      "category": "Profile",
+      "availabilityStatus": "AVAILABLE",
+      "externalDataTranFields": [
+        {
+          "masterLabel": "category",
+          "dataType": "Text",
+          "developerName": "category",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "dateTime",
+          "dataType": "DateTime",
+          "developerName": "dateTime",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "deviceId",
+          "dataType": "Text",
+          "developerName": "deviceId",
+          "isDataRequired": true,
+          "primaryIndexOrder": 1,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "eventId",
+          "dataType": "Text",
+          "developerName": "eventId",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "eventType",
+          "dataType": "Text",
+          "developerName": "eventType",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "pageView",
+          "dataType": "Number",
+          "developerName": "pageView",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "sourceUrlReferrer",
+          "dataType": "Text",
+          "developerName": "sourceUrlReferrer",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "sessionId",
+          "dataType": "Text",
+          "developerName": "sessionId",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "sourceChannel",
+          "dataType": "Text",
+          "developerName": "sourceChannel",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "sourceLocale",
+          "dataType": "Text",
+          "developerName": "sourceLocale",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "sourcePageType",
+          "dataType": "Text",
+          "developerName": "sourcePageType",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "sourceUrl",
+          "dataType": "Text",
+          "developerName": "sourceUrl",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "phoneNumber",
+          "dataType": "Text",
+          "developerName": "phoneNumber",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        }
+      ],
+      "fieldCount": 13,
+      "availabilityStatusLabel": {
+        "label": "Available",
+        "rawValue": "AVAILABLE"
       },
       "streamingAppLabel": "Infinity_Stage_Website"
     },
