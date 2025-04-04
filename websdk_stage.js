@@ -505,8 +505,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 //forgot password
-
-
                 listener("click",".forgetPassword",(event)=>{
                     console.log("in forgot password");
 
