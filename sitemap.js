@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }).then(() => {
         // set the log level during sitemap development to see potential problems
-        console.log('Salesforce Interactions WEB SDK is           a ready');
+        console.log('Salesforce Interactions WEB SDK is anddd ready');
         SalesforceInteractions.setLoggingLevel('DEBUG');
 
 
@@ -402,6 +402,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const global = {
             listeners: [
+
+                listener("click", ".dropdown-toggle", (event) => {
+                    console.log("Profile icon clicked");
+                
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: 'Profile Icon',
+                            eventType: 'icon',
+                            attributes: {
+                            }
+                        }
+                    });
+                }),
+                
+
+            
+                //logo click
+
+
+                listener("click", ".headerlogo", (event) => {
+                    console.log("Logo clicked");
+                
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: 'Infinity Logo Click',
+                            eventType: 'icon',
+                            attributes: {
+                            }
+                        }
+                    });
+                }),
+                
 
                 // login with otp
 
@@ -1684,35 +1716,32 @@ document.addEventListener("DOMContentLoaded", function () {
                             console.log("startDate:", startDatec);
                             console.log("packagePriceText:", packagePriceText);
 
-                            // const packagePrice = parseFloat(packagePriceText.replace(/[^\d.]/g, ""));
-
-                            // Push package data to lineItems array
                             lineItems.push({
-                                catalogObjectType: "Product",   //check here
-                                catalogObjectId: `product-${index + 1}`, //check here
-
+                                catalogObjectType: "Product",
+                                catalogObjectId: `product-${index + 1}`,
                                 quantity: 1,
                                 price: parseFloat(price1),
-                                // StartDate: 2025-12-30,
-                                // ValidTill: 2025-12-18,
-                                // attributes: {
-                                //     packagenameee: "jee",
-                                // }
-                                //PackageName: packageName
+                                attributes: {
+                                    PackageName: packageName,
+                                    StartDate: startDatec,
+                                    ValidTill: validTillc,
+                                    // SubTotal: parseFloat(subtotal),
+                                    SubTotal1: parseFloat(subtotal),
+                                }
+                            });
 
-                            });
-                            SalesforceInteractions.sendEvent({
-                                interaction: {
-                                    name: 'package name captured', //change this to actual event name
-                                    eventType: 'CustomEvent',
-                                    attributes: {
-                                        PackageName: packageName,
-                                        StartDate: startDatec,
-                                        ValidTill: validTillc,
-                                        SubTotal: parseFloat(subtotal),
-                                    },
-                                },
-                            });
+                            // SalesforceInteractions.sendEvent({
+                            //     interaction: {
+                            //         name: 'package name captured', //change this to actual event name
+                            //         eventType: 'CustomEvent',
+                            //         attributes: {
+                            //             PackageName: packageName,
+                            //             StartDate: startDatec,
+                            //             ValidTill: validTillc,
+                            //             SubTotal: parseFloat(subtotal),
+                            //         },
+                            //     },
+                            // });
 
                         });
 
@@ -1725,40 +1754,38 @@ document.addEventListener("DOMContentLoaded", function () {
                         function convertToISO(dateStr) {
 
 
-                            if (dateStr === "N/A") return "N/A"; // Handle missing values
+                            if (dateStr === "N/A") return "N/A"; 
 
-                            // Remove ordinal suffix (st, nd, rd, th) from the date
-                            // Remove ordinal suffixes (st, nd, rd, th)
+                          
                             dateStr = dateStr.replace(/(\d+)(st|nd|rd|th)/, "$1");
 
                             // Convert to ISO format (YYYY-MM-DD)
                             const dateObj = new Date(dateStr);
-                            return dateObj.toISOString().split("T")[0]; // Returns only the date part
+                            return dateObj.toISOString().split("T")[0]; 
                         }
 
                         SalesforceInteractions.sendEvent({
                             interaction: {
                                 name: 'Purchase',
                                 order: {
-                                    id: new Date().getTime().toString(),  // Generate unique order ID
-                                    totalValue: parseFloat(grandTotal), // Ensure numeric value
-                                    //quantity: arraylength,
+                                    id: new Date().getTime().toString(),  
+                                    totalValue: parseFloat(grandTotal),                                 
                                     lineItems
                                 }
                             }
                         });
 
-                        //check this send event 
+                
 
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: 'checkout',
-                                eventType: 'CustomEvent',
-                                attributes: {
-                                    Quantity: arraylength,
-                                },
-                            },
-                        });
+                        // SalesforceInteractions.sendEvent({
+                        //     interaction: {
+                        //         name: 'checkout',
+                        //         eventType: 'CustomEvent',
+                        //         attributes: {
+                        //             Quantity: arraylength,
+                        //         },
+                        //     },
+                        // });
 
 
                     }
