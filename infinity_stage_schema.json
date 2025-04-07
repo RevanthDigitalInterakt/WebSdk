@@ -134,6 +134,34 @@
           "isCurrencyIsoCode": false
         },
         {
+          "masterLabel": "packageName1",
+          "dataType": "Text",
+          "developerName": "attributesPackageName1",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "packageName2",
+          "dataType": "Text",
+          "developerName": "attributespackageName2",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "packageName4",
+          "dataType": "Text",
+          "developerName": "attributePackageName4",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "packageName3",
+          "dataType": "Text",
+          "developerName": "packageName3",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
           "masterLabel": "sessionId",
           "dataType": "Text",
           "developerName": "sessionId",
@@ -233,7 +261,7 @@
           "isCurrencyIsoCode": false
         }
       ],
-      "fieldCount": 15,
+      "fieldCount": 19,
       "availabilityStatusLabel": {
         "label": "In Use",
         "rawValue": "INUSE"
@@ -1355,6 +1383,73 @@
       },
       "streamingAppLabel": "Infinity_Stage_Website"
     },
+
+    {
+      "developerName": "selfLearn",
+      "masterLabel": "Self Learn",
+      "category": "Engagement",
+      "availabilityStatus": "INUSE",
+      "externalDataTranFields": [
+        {
+          "masterLabel": "category",
+          "dataType": "Text",
+          "developerName": "category",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "dateTime",
+          "dataType": "DateTime",
+          "developerName": "dateTime",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "deviceId",
+          "dataType": "Text",
+          "developerName": "deviceId",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "sessionId",
+          "dataType": "Text",
+          "developerName": "sessionId",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "eventType",
+          "dataType": "Text",
+          "developerName": "eventType",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "interactionName",
+          "dataType": "Text",
+          "developerName": "interactionName",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "eventId",
+          "dataType": "Text",
+          "developerName": "eventId",
+          "isDataRequired": true,
+          "primaryIndexOrder": 1,
+          "isCurrencyIsoCode": false
+        }
+      ],
+      "fieldCount": 7,
+      "availabilityStatusLabel": {
+        "label": "In Use",
+        "rawValue": "INUSE"
+      },
+      "streamingAppLabel": "Infinity_Stage_Website"
+    },
+
+
     {
       "developerName": "identity",
       "masterLabel": "Identity",
