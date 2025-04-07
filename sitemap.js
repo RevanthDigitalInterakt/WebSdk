@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }).then(() => {
         // set the log level during sitemap development to see potential problems
-        console.log('Salesforce Interactions WEB SDK is ready');
+        console.log('Salesforce Interactions WEB SDK is           aready');
         SalesforceInteractions.setLoggingLevel('DEBUG');
 
 
@@ -68,6 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const stuexamName = examNameElement ? examNameElement.textContent.trim() : 'Exam name not found';
 
                 console.log("Exam Name:", stuexamName);
+              //  sessionStorage.setItem("ExamName", stuexamName);
                 const elements = document.querySelectorAll('.UNFAPP-cunt.UNFAPP-elips');
                 console.log("Checking elements for View Report");
 
@@ -91,13 +92,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Send collected data to Salesforce
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: 'View Report',
+                            name: 'Student Report',
                             eventType: 'CustomEvent',
                             attributes: {
-                                interactionName: "Student ViewReport",
                                 Score: score,
                                 TimeTaken: ttt,
-                                StudentExamName: stuexamName,
+                                StudentExamName: stuexamName,   //change here
                                 Accuracy: accuracy,
                                 AvgTimePerQuestion: avgtime,
                             },
@@ -231,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (mobilenumber) {
                 console.log("Capturing Mobile Number:", mobilenumber);
                 SalesforceInteractions.sendEvent({
-                    interaction: { name: 'Phone Captured' },
+                    interaction: { name: 'Registration Form' },
                     user: { attributes: { phoneNumber: mobilenumber, eventType: 'contactPointPhone' } }
                 });
             }
@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (namee) {
                 console.log("Capturing Name:", namee);
                 SalesforceInteractions.sendEvent({
-                    interaction: { name: 'Name Captured' },
+                    interaction: { name: 'Registration Form' },
                     user: { attributes: { firstName: namee, eventType: 'identity', isAnonymous: '0' } }
                 });
             }
@@ -247,7 +247,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (emaill) {
                 console.log("Capturing Email:", emaill);
                 SalesforceInteractions.sendEvent({
-                    interaction: { name: 'Email Captured' },
+                    interaction: { name: 'Registration Form' },
                     user: { attributes: { email: emaill, eventType: 'contactPointEmail' } }
                 });
             }
@@ -256,11 +256,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.log("Capturing Grade & Option:", selectedGrade, activeOption);
                 SalesforceInteractions.sendEvent({
                     interaction: {
-                        name: 'Registration Details Captured',
+                        name: 'Registration Form',
                         eventType: 'CustomEvent',
-
                         attributes: {
-                            Grade1: selectedGrade || null,
+                            Grade: selectedGrade || null,
                             ActiveOption: activeOption || null
                         }
                     }
@@ -286,12 +285,16 @@ document.addEventListener("DOMContentLoaded", function () {
             const schoolName = schoolInput.value || "";
 
             console.log("Selected Time Slot:", selectedTimeSlot);
-            console.log("🏫 School Name:", schoolName);
+            console.log("School Name:", schoolName);
 
             SalesforceInteractions.sendEvent({
                 interaction: {
-                    name: 'Registration form', eventType: 'CustomEvent',
-                    attributes: { TimeSlot: selectedTimeSlot, SchoolName: schoolName }
+                    name: 'Registration form',
+                    eventType: 'CustomEvent',
+                    attributes: {
+                        TimeSlot: selectedTimeSlot,
+                        SchoolName: schoolName
+                    }
                 }
             });
 
@@ -313,23 +316,23 @@ document.addEventListener("DOMContentLoaded", function () {
             console.log("Pin Code:", pinCode);
 
             SalesforceInteractions.sendEvent({
-                    interaction: {
-                        name: "Registration Form Details",
+                interaction: {
+                    name: "Registration Form",
+                },
+                user: {
+                    attributes: {
+                        stateProvince: state,
+                        city: city,
+                        district: district,
+                        postalCode: pinCode,
+                        eventType: 'identity',
+                        isAnonymous: '0',
+
                     },
-                         user: { 
-                        attributes: {
-                            stateProvince: state,
-                            city:city,
-                            district:district,
-                            postalCode:pinCode,
-                            eventType: 'identity',
-                            isAnonymous: '0',
+                }
+            });
 
-                        },
-                    }
-                });
 
-            
 
         }
 
@@ -386,12 +389,6 @@ document.addEventListener("DOMContentLoaded", function () {
         secondPageObserver.observe(document.body, { childList: true, subtree: true });
         thirdPageObserver.observe(document.body, { childList: true, subtree: true });
 
-
-
-
-
-
-
         const {
             cashDom,
             listener,
@@ -401,59 +398,153 @@ document.addEventListener("DOMContentLoaded", function () {
             CatalogObjectInteractionName,
         } = SalesforceInteractions
 
-        // const landEventSent = sessionStorage.getItem('landEventSent') || false;
-        // if (!landEventSent) {
-        //     SalesforceInteractions.sendEvent({
-        //         interaction: {
-        //             name: "Entered Website",
-        //             catalogObject: {
-        //                 type: 'Entered',
-        //                 id: 'Entered',
-        //             }
-        //         }
-        //     })
-        //     sessionStorage.setItem('landEventSent', true);
-        // }
+
 
         const global = {
             listeners: [
 
-                listener("click", ".styles_signInButtonSmall__KWWH2", (event) => {
-                    console.log("Sign-in button clicked");
-
-                    // Capture the event in Salesforce
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: "Sign-In Clicked",
-                            catalogObject: {
-                                type: 'Button',
-                                id: 'signin-button',
-                            },
-                        },
-                    });
-                }),
-
-
+                // login with otp
 
 
                 listener("click", ".continueBtn.ng-star-inserted", (event) => {
-                    // Fetch the phone number and country code
-                    let phoneNumber = document.querySelector("#phone").value;
+                    console.log("Entered login event");
+                    // event.stopImmediatePropagation();
+                    // Fetch and trim phone number and country code
+                    let phoneNumber = document.querySelector("#phone").value.trim();
+                    console.log("Phone Number:", phoneNumber);
 
+                    let countryCode = document.querySelector("#country-code").value.trim();
+                    console.log("Country Code:", countryCode);
 
+                    // Country code mapping
+                    let countryCodeMap = {
+                        "91": "IN",
+                        "971": "AE"
+                    };
+
+                    // Extract country abbreviation using the map
+                    let country = countryCodeMap[countryCode] || "";
+                    console.log("Country:", country);
+
+                    // Combine country code and phone number (without + and space)
+                    let mobilenumber_code = `${countryCode}${phoneNumber}`;
+                    console.log("Full Mobile Number:", mobilenumber_code);
+
+                    // Send event to Salesforce
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Sign in Button",
+                            name: "Login",
                         },
                         user: {
                             attributes: {
-                                phoneNumber: phoneNumber,
+                                phoneNumber: mobilenumber_code,  // Example: 919876543210
                                 eventType: 'contactPointPhone',
+                                sourceLocale: country,  // Example: IN
                             },
                         },
                     });
-
                 }),
+
+                //login with password
+
+
+                // listener("click", ".continueBtn", (event) => {
+                //     console.log("Entered login with password");
+                //     event.preventDefault(); 
+
+                //     let phoneNumber = document.querySelector("#phone").value.trim();
+                //     console.log("Phone Number:", phoneNumber);
+
+                //     let countryCode = document.querySelector("#country-code").value.trim();
+                //     console.log("Country Code:", countryCode);
+
+                //     // Country code mapping
+                //     let countryCodeMap = {
+                //         "91": "IN",
+                //         "971": "AE"
+                //     };
+
+                //     // Extract country abbreviation using the map
+                //     let country = countryCodeMap[countryCode] || "";
+                //     console.log("Country:", country);
+
+                //     // Combine country code and phone number (without + and space)
+                //     let mobilenumber_code = `${countryCode}${phoneNumber}`;
+                //     console.log("Full Mobile Number:", mobilenumber_code);
+
+                //     // Send event to Salesforce
+                //     SalesforceInteractions.sendEvent({
+                //         interaction: {
+                //             name: "Login With Password",
+                //         },
+                //         user: {
+                //             attributes: {
+                //                 phoneNumber: mobilenumber_code,  // Example: 919876543210
+                //                 eventType: 'loginWithPassword',
+                //                 sourceLocale: country,  // Example: IN
+                //             },
+                //         },
+                //     });
+                // }),
+
+
+                //forgot password
+                
+                
+                
+                listener("click", ".forgetPassword", (event) => {
+                    console.log("in forgot password");
+
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: 'Forgot password',
+                            eventType: 'forgot',
+                            attributes: {
+                            },
+                        },
+                    });
+                }),
+
+                //logout
+
+                listener("click", ".dropdown-item", (event) => {
+                    console.log("in log out");
+
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: 'Log out',
+                            eventType: 'logout',
+                            attributes: {
+                            },
+                        },
+                    });
+                }),
+
+
+                //view solution due to angular issue writing here
+
+
+                // listener("click", ".btn.UNFAPP-asmnt-blue-hdrbtn.ng-star-inserted", (event) => {
+                //     console.log("In view test report page");
+
+                   
+                //        // const examContainer = document.querySelector("h3.UNFAPP-hdng.UNFAPP-main-hdng");
+                //         const examName =  sessionStorage.getItem("ExamName") || "Unknown Test";
+
+                //         console.log("Captured Exam Name:", examName);
+
+                //         SalesforceInteractions.sendEvent({
+                //             interaction: {
+                //                 name: 'View Solutions',
+                //                 eventType: 'CustomEvent',
+                //                 attributes: {
+                //                     ExamName: examName,
+                //                 },
+                //             },
+                //         });
+                    
+                // }),
+
 
                 listener("click", ".heroSection_prdrankbtn__oLW5s", (event) => {
                     console.log("Predict rank button clicked");
@@ -499,7 +590,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (name) {
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: 'Rank Predictor Name Captured',
+                                name: 'Rank Predictor',
                             },
                             user: {
                                 attributes: {
@@ -516,7 +607,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (phoneNumber) {
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: 'Phone Captured',
+                                name: 'Rank Predictor',
                             },
 
                             user: {
@@ -662,10 +753,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Send the interaction event to Salesforce with contact details
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Contact Us Button",
-                            eventType: "CustomEvent",
+                            name: "Contact Us",
                             attributes: {
-                                interactionName: "Contact Us Button",
                                 phoneNumber: phoneNumber,
                                 eventType: "contactPointPhone"
                             }
@@ -698,10 +787,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Send the interaction event to Salesforce
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Select Focus Exam",
+                            name: "Focus Exam",
                             eventType: "CustomEvent",
                             attributes: {
-                                CourseType1: selectedCourseName,
+                                CourseType: selectedCourseName,
                             },
                         },
                     });
@@ -735,7 +824,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             name: "Edit Target Exam",
                             eventType: "CustomEvent",
                             attributes: {
-                                CourseType1: coursetype1,
+                                CourseType: coursetype1,
                             }
                         }
                     });
@@ -834,7 +923,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             name: 'View Report',
                             eventType: 'CustomEvent',
                             attributes: {
-                                interactionName: "Student ViewReport",
                                 StudentExamName: examNamee,
                             },
                         },
@@ -844,6 +932,54 @@ document.addEventListener("DOMContentLoaded", function () {
 
             ]
         };
+
+
+        //viewreport solutions button click
+
+        const ViewReportPage = {
+            name: 'ViewReportPage',
+            isMatch: () => /\/viewtestreport/.test(window.location.href),
+        
+            onEnter: () => {
+                console.log("Entered ViewReportPage");
+        
+                // Wait briefly and store exam name after DOM updates
+                setTimeout(storeExamNameOnPageLoad, 500); 
+            },
+        
+            listeners: [
+                listener("click", ".btn.UNFAPP-asmnt-blue-hdrbtn.ng-star-inserted", () => {
+                    console.log(" Clicked View Solutions");
+        
+                    const storedExamName = sessionStorage.getItem("examName") || "Unknown Exam";
+                    console.log(" Retrieved exam name:", storedExamName);
+        
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: 'View Solutions',
+                            eventType: 'CustomEvent',
+                            attributes: {
+                                ExamName: storedExamName,
+                            },
+                        },
+                    });
+                }),
+            ],
+        };
+        
+        function storeExamNameOnPageLoad() {
+            const examElement = document.querySelector("h3.UNFAPP-hdng.UNFAPP-main-hdng");
+            if (examElement) {
+                const examName = examElement.textContent.trim();
+                console.log("📥 Stored exam name on page load:", examName);
+                sessionStorage.setItem("examName", examName);
+            } else {
+                console.warn(" Exam name not found on page load.");
+            }
+        }
+        
+        
+
 
         const homepage = {
 
@@ -907,20 +1043,20 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.log("Mobile input field not found!");
                     }
 
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: "join free",
-                            catalogObject: {
-                                type: 'Button',
-                                id: 'join-for-free',
-                            }
-                        }
-                    });
+                    // SalesforceInteractions.sendEvent({
+                    //     interaction: {
+                    //         name: "join free",
+                    //         catalogObject: {
+                    //             type: 'Button',
+                    //             id: 'join-for-free',
+                    //         }
+                    //     }
+                    // });
 
                     if (mobileNumber) {
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: 'join-for-free'
+                                name: 'join for free'
                             },
                             user: {
                                 attributes: {
@@ -967,8 +1103,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                 name: 'Competitive Exam Selection',
                                 eventType: 'CustomEvent',
                                 attributes: {
-                                    CourseType1: storedCourseName,
-                                    Grade1: selectedClass,
+                                    CourseType: storedCourseName,
+                                    Grade: selectedClass,
                                 },
                             },
                         });
@@ -1051,7 +1187,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 name: 'BookCounsellingSession',
                                 eventType: 'CustomEvent',
                                 attributes: {
-                                    Grade1: grade || null,
+                                    Grade: grade || null,
                                     Foundation: foundation || null,
                                 },
                             },
@@ -1110,37 +1246,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.log("Course name could not be found.");
                     }
                 }),
-                // Add an event listener for the button click
-                // listener("click", ".slt_grbtn", (event) => {
-                //     // Capture the grade text within the clicked button
-                //     const gradeText = event.currentTarget.textContent.trim();
-                //     const storedCourse = sessionStorage.getItem("selectedCourse");
-
-                //     if (gradeText && storedCourse) {
-                //         console.log("Selected Grade:", gradeText);
-                //         console.log("selected course:", storedCourse);
-
-                //         SalesforceInteractions.sendEvent({
-                //             interaction: {
-                //                 name: 'Gradeee',
-                //                 eventType: 'CustomEvent',
-                //             },
-
-                //             attributes: {
-                //                 Grade1: gradeText,
-                //                 CourseType1: storedCourse,
-
-                //             },
-
-                //         });
-
-
-                //     } else {
-                //         console.log("Grade text could not be found.");
-                //     }
-                // }),
-
-
+               
             ]
         }
 
@@ -1179,7 +1285,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 eventType: "CustomEvent",
                                 attributes: {
                                     interactionName: "Test Selected",
-                                    TestName1: stuexamName,
+                                    TestName: stuexamName,
                                 },
                             },
                         });
@@ -1222,7 +1328,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             name: "Live Class Enrollment",
                             eventType: "CustomEvent",
                             attributes: {
-                                CourseType1: courseName,
+                                CourseType: courseName,
                                 Grade1: grade,
                                 Duration: duration,
                                 Language: language,
@@ -1282,7 +1388,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             eventType: 'CustomEvent',
                             attributes: {
                                 interactionName: "Student Begin Test",
-                                BeginTest1: "Yes",
+                                BeginTest: "Yes",
                             },
                         },
                     });
@@ -1299,7 +1405,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             eventType: 'CustomEvent',
                             attributes: {
                                 interactionName: "Student Finish Test",
-                                BeginTest1: "Yes",
+                                BeginTest: "Yes",
                             },
                         },
                     });
@@ -1344,108 +1450,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
         };
 
-        // const Registration = {
-        //     name: 'Registration',
-        //     isMatch: () => /\/score/.test(window.location.href),
-        //     listeners: [
-        //         listener("click", ".heroSection_prdrankbtn__pWFpU", (event) => {
-        //             console.log("Submit button clicked!");
-
-
-        //             const form = event.currentTarget.closest("form"); // Get the closest form
-
-
-        //             let formData = new FormData(form);
-        //             let data = {};
-
-        //             // Convert form data to JSON
-        //             formData.forEach((value, key) => {
-        //                 data[key] = value;
-        //             });
-
-        //             // Capture values from the form
-        //             const namee = data.name || null;
-        //             const emaill = data.email || null;
-        //             const mobilenumber = data.mobile || null;
-        //             const selectedGrade = data.grade || null;
-        //             const activeOption = document.querySelector('.heroSection_optionname_active__4mEMT')?.textContent.trim() || null;
-
-        //             // Send event for mobile number
-        //             if (mobilenumber) {
-        //                 SalesforceInteractions.sendEvent({
-        //                     interaction: {
-        //                         name: 'Phone Captured',
-        //                     },
-        //                     user: {
-        //                         attributes: {
-        //                             phoneNumber: mobilenumber,
-        //                             eventType: 'contactPointPhone',
-        //                         },
-        //                     },
-        //                 });
-        //             }
-
-        //             // Send event for name
-        //             if (namee) {
-        //                 SalesforceInteractions.sendEvent({
-        //                     interaction: {
-        //                         name: 'Name Captured',
-        //                     },
-        //                     user: {
-        //                         attributes: {
-        //                             firstName: namee,
-        //                             eventType: 'identity',
-        //                             isAnonymous: '0',
-        //                         },
-        //                     },
-        //                 });
-        //             }
-
-        //             // Send event for email
-        //             if (emaill) {
-        //                 SalesforceInteractions.sendEvent({
-        //                     interaction: {
-        //                         name: 'Email Captured',
-        //                     },
-        //                     user: {
-        //                         attributes: {
-        //                             email: emaill,
-        //                             eventType: 'contactPointEmail',
-        //                         },
-        //                     },
-        //                 });
-        //             }
-
-        //             // Send event for grade and active option
-        //             if (selectedGrade || activeOption) {
-        //                 SalesforceInteractions.sendEvent({
-        //                     interaction: {
-        //                         name: 'Registration Details Captured',
-        //                         eventType: 'CustomEvent',
-        //                     },
-        //                     attributes: {
-        //                         Grade1: selectedGrade || null,
-        //                         ActiveOption: activeOption || null,
-        //                     },
-        //                 });
-        //             }
-
-        //             // Log the captured data for debugging
-        //             console.log(`Captured Registration Data:`, {
-        //                 name: namee,
-        //                 email: emaill,
-        //                 mobile: mobilenumber,
-        //                 grade: selectedGrade,
-        //                 activeOption: activeOption,
-        //             });
-
-
-        //         }),
-
-
-        //     ],
-        // };
-
+      
 
         let selectedPaymentMethod = "UPI"; // Default selection when landing on the page
 
@@ -1484,34 +1489,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         console.log("Sending event to Salesforce...");
 
-                        // Fire event to Salesforce
+                        function generateUniqueId() {
+                            return `id_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
+                        }
+
                         SalesforceInteractions.sendEvent({
                             interaction: {
                                 name: "Add To Cart",
                                 lineItem: {
+                                    // PackageName : packageName,
+                                    price : parseFloat(packagePrice),
                                     catalogObjectType: "Product",
-                                    catalogObjectId: "product-1",
-                                    quantity: 1,  // Keep this as a number, not a string
-                                    price: parseFloat(packagePrice),  // Ensure this is correctly formatted
-                                    currency: currency,  // Keep currency as a string
-                                    // attributes: {
-                                    //     PackageName: packageName,
-                                    // }
-                                }
-                            }
-                        });
+                                    catalogObjectId: generateUniqueId(),
+                                    quantity: 1,  
 
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: 'package name captured',
-                                eventType: 'CustomEvent',
-                                attributes: {
-                                    PackageName: packageName,
-                                },
-                            },
+                                    attributes: {
+                                        packageName4:packageName,
+                                    },
+
+                            }
+
+                            }
                         });
                     }
                 }),
+
 
 
 
@@ -1560,7 +1562,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: 'Checkout First&LastName Captured',
+                                    name: 'Checkout',
                                 },
                                 user: {
                                     attributes: {
@@ -1577,7 +1579,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: 'Checkout Phone Captured',
+                                    name: 'Checkout',
                                 },
                                 user: {
                                     attributes: {
@@ -1592,7 +1594,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: 'Checkout Email Captured',
+                                    name: 'Checkout',
                                 },
                                 user: {
                                     attributes: {
@@ -1606,7 +1608,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (pincode) {
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: 'Checkout pincode Captured',
+                                    name: 'Checkout',
                                 },
                                 user: {
                                     attributes: {
@@ -1659,7 +1661,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             grandTotal
                         };
 
-
                         const packages = document.querySelectorAll(".SUBCRP-cart-package-box");
 
                         let lineItems = [];
@@ -1687,8 +1688,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             // Push package data to lineItems array
                             lineItems.push({
-                                catalogObjectType: "Product",
-                                catalogObjectId: `product-${index + 1}`,
+                                catalogObjectType: "Product",   //check here
+                                catalogObjectId: `product-${index + 1}`, //check here
+
                                 quantity: 1,
                                 price: parseFloat(price1),
                                 // StartDate: 2025-12-30,
@@ -1701,7 +1703,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             });
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: 'package name captured',
+                                    name: 'package name captured', //change this to actual event name
                                     eventType: 'CustomEvent',
                                     attributes: {
                                         PackageName: packageName,
@@ -1745,9 +1747,12 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                             }
                         });
+
+                        //check this send event 
+
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: 'checkout quantity',
+                                name: 'checkout',
                                 eventType: 'CustomEvent',
                                 attributes: {
                                     Quantity: arraylength,
@@ -1756,87 +1761,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         });
 
 
-
-
-
                     }
                 }),
-
-
-
-
-                // listener("click", ".pymnt-blue-btn", () => {
-                //     console.log("Payment button clicked");
-
-                //     // Small delay to ensure correct payment method is picked
-
-                //     // Get the selected payment method
-                //     let headingElement = document.querySelector(".subscrp-sctn-hdng");
-                //     let paymentMethod = headingElement ? headingElement.textContent.trim() : "";
-
-                //     console.log("Payment Method:", paymentMethod);
-
-                //     let paymentMethodType = "Unknown";
-                //     if (paymentMethod.includes("UPI")) {
-                //         paymentMethodType = "UPI";
-                //     } else if (paymentMethod.includes("Wallets")) {
-                //         paymentMethodType = "Wallets";
-                //     } else if (paymentMethod.includes("Credit / Debit Card")) {
-                //         paymentMethodType = "Credit / Debit Card";
-                //     } else if (paymentMethod.includes("Netbanking")) {
-                //         paymentMethodType = "Netbanking";
-                //     }
-
-                //     // Fetch billing summary values
-                //     let subtotal = "0", discount = "0", grandTotal = "0";
-                //     document.querySelectorAll('.SUBCRP-cart-review-list li').forEach((item) => {
-                //         let label = item.querySelector('span')?.innerText?.trim();
-                //         let valueElement = item.querySelector('.review-bold-text, .review-blue-txt.review-bold-text');
-
-                //         if (label === 'Subtotal') {
-                //             subtotal = valueElement?.innerText.replace(/[^\d.]/g, '') || "0";
-                //         } else if (label?.includes('Discount')) {
-                //             discount = valueElement?.innerText.replace(/[^\d.]/g, '') || "0";
-                //         } else if (label === 'Grand Total') {
-                //             grandTotal = valueElement?.innerText.replace(/[^\d.]/g, '') || "0";
-                //         }
-                //     });
-
-                //     console.log('Subtotal:', subtotal);
-                //     console.log('Discount:', discount);
-                //     console.log('Grand Total:', grandTotal);
-
-                //     // Send event to SalesforceInteractions
-                //     SalesforceInteractions.sendEvent({
-                //         interaction: {
-                //             name: 'Payment Method captured',
-                //             eventType: 'CustomEvent',
-                //             attributes: {
-                //                 PaymentMethod: paymentMethodType,
-                //                 SubTotal: parseFloat(subtotal),
-                //                 Discount: parseFloat(discount),
-                //                 GrandTotal: parseFloat(grandTotal)
-                //             },
-                //         },
-                //     });
-
-                //     console.log("Salesforce event fired.");
-                //     // Adding a delay of 500ms to ensure correct payment method is captured
-
-                // }),
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1871,11 +1797,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     let finalsubtotal = subtotalP.replace(/[^\d.]/g, '');
                     finalsubtotal = finalsubtotal.replace(/^\.|(?<=\.)\.+/g, '');
 
-                    // let DiscountP = discountElement1?.innerText;
-                    // let finaldiscount = DiscountP.replace(/[^\d.]/g, '');
-                    // finaldiscount = finaldiscount.replace(/^\.|(?<=\.)\.+/g, '');
 
-                    // Discount Extraction — with handling if discount does not exist
                     let DiscountP = discountElement1?.innerText || 0;
                     let finaldiscount = DiscountP ? DiscountP.replace(/[^\d.]/g, '').replace(/^\.|(?<=\.)\.+/g, '') : 0;
 
@@ -1891,7 +1813,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Example: Send event to Salesforce (or any other tracking tool)
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Payment Method Selected",
+                            name: "Payment Method",
                             eventType: "CustomEvent",
                             attributes: {
                                 PaymentMethod: paymentMethod,
@@ -1904,102 +1826,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 }),
 
 
-
-
-
-
             ],
 
         };
 
 
 
-        // function selectedpm() {
-        //     // Get the selected payment method
-        //     let headingElement = document.querySelector(".subscrp-sctn-hdng");
-        //     let paymentMethod = headingElement ? headingElement.textContent.trim() : "";
-
-        //     console.log("Payment Method:", paymentMethod);
-
-        //     let paymentMethodType = "Unknown";
-        //     if (paymentMethod.includes("UPI")) {
-        //         paymentMethodType = "UPI";
-        //     } else if (paymentMethod.includes("Wallets")) {
-        //         paymentMethodType = "Wallets";
-        //     } else if (paymentMethod.includes("Credit / Debit Card")) {
-        //         paymentMethodType = "Credit / Debit Card";
-        //     } else if (paymentMethod.includes("Netbanking")) {
-        //         paymentMethodType = "Netbanking";
-        //     }
-
-        //     // Fetch billing summary values
-        //     let subtotal = "0", discount = "0", grandTotal = "0";
-        //     document.querySelectorAll('.SUBCRP-cart-review-list li').forEach((item) => {
-        //         let label = item.querySelector('span')?.innerText?.trim();
-        //         let valueElement = item.querySelector('.review-bold-text, .review-blue-txt.review-bold-text');
-
-        //         if (label === 'Subtotal') {
-        //             subtotal = valueElement?.innerText.replace(/[^\d.]/g, '') || "0";
-        //         } else if (label?.includes('Discount')) {
-        //             discount = valueElement?.innerText.replace(/[^\d.]/g, '') || "0";
-        //         } else if (label === 'Grand Total') {
-        //             grandTotal = valueElement?.innerText.replace(/[^\d.]/g, '') || "0";
-        //         }
-        //     });
-
-        //     console.log('Subtotal:', subtotal);
-        //     console.log('Discount:', discount);
-        //     console.log('Grand Total:', grandTotal);
-
-        //     // Send event to SalesforceInteractions
-
-
-        //     SalesforceInteractions.sendEvent({
-        //         interaction: {
-        //             name: 'Payment Method captured',
-        //             eventType: 'CustomEvent',
-        //             attributes: {
-        //                 PaymentMethod: paymentMethodType,
-        //                 SubTotal: parseFloat(subtotal),
-        //                 Discount: parseFloat(discount),
-        //                 GrandTotal: parseFloat(grandTotal)
-        //             },
-        //         },
-        //     });
-        // }
-
-        // // MutationObserver to detect when user manually switches payment method
-        // const observer = new MutationObserver(() => {
-        //     console.log("Payment method selection changed...");
-
-        //     let headingElement = document.querySelector(".subscrp-sctn-hdng");
-        //     let newPaymentMethod = headingElement ? headingElement.textContent.trim() : "";
-
-        //     if (newPaymentMethod !== selectedPaymentMethod) {
-        //         selectedPaymentMethod = newPaymentMethod; // Update to new method
-        //         console.log(`New payment method selected: ${selectedPaymentMethod}`);
-
-
-
-        //         // document.querySelector(".pymnt-blue-btn")?.addEventListener("click", () => {
-        //         //     selectedpm();
-        //         // });
-
-        //         const paymentButton = document.querySelector(".pymnt-blue-btn");
-
-        //         if (paymentButton) {
-        //             paymentButton.addEventListener("click", () => {
-        //                 selectedpm();
-        //             });
-        //         }
-
-
-
-        //     }
-        // });
-
-        // // Observe changes in the payment method selection
-        // observer.observe(document.body, { childList: true, subtree: true });
 
 
 
@@ -2046,10 +1878,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: "Payment status captured",
+                                name: "Payment status",
                                 eventType: "CustomEvent",
                                 attributes: {
-                                    PaymentStatus1: "Congratulations"
+                                    PaymentStatus: "Congratulations"
                                 }
                             }
                         });
@@ -2058,14 +1890,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             interaction: {
                                 name: 'CoursePurchase',
                                 order: {
-                                    id: generateUniqueId(),
+                                    id: generateUniqueId(),   //check this
                                     totalValue: parseFloat(capturedAmount)
                                 }
                             }
                         });
-
-
-
                         PaymentCapture.disconnectObserver();
                         return;
                     }
@@ -2095,7 +1924,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 name: "Payment status captured",
                                 eventType: "CustomEvent",
                                 attributes: {
-                                    PaymentStatus1: "Failed"
+                                    PaymentStatus: "Failed"
                                 }
                             }
                         });
@@ -2103,7 +1932,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             interaction: {
                                 name: 'CoursePurchase',
                                 order: {
-                                    id: generateUniqueId(),
+                                    id: generateUniqueId(), //check this again
                                     totalValue: parseFloat(capturedAmount)
 
                                 }
@@ -2149,77 +1978,7 @@ document.addEventListener("DOMContentLoaded", function () {
             isMatch: () => /\/doubts/.test(window.location.href),
 
             listeners: [
-                //         // listener("click", ".ask-button", (event) => {
 
-
-
-                //         //     console.log("Entered in the doubt session");
-
-
-                //         //     let selectedSubject = ''; // Variable to store the selected subject name
-
-                //         //     // Assuming one of the .subject-option elements was clicked
-                //         //     const subjectNameElement = document.querySelector('.subject-option.selected .subjectName');
-                //         //     if (subjectNameElement) {
-                //         //         selectedSubject = subjectNameElement.innerText.trim();
-                //         //         console.log(`Selected Subject: ${selectedSubject}`);
-
-                //         //         SalesforceInteractions.sendEvent({
-                //         //             interaction: {
-                //         //                 name: 'DoubtsSubjectSelected',
-                //         //                 eventType: 'CustomEvent',
-                //         //                 attributes: {
-                //         //                     subjectsssss: selectedSubject
-                //         //                 }
-                //         //             }
-                //         //         });
-                //         //     }
-
-                //         // }),
-
-                //         // Add the listener to the ask-button
-                //         listener("click", ".ask-button", (event) => {
-                //             console.log("Entered in the doubt session");
-
-                //             // Find the subject that is currently marked as selected
-                //             const selectedSubjectElement = document.querySelector('.subject-option.selected .subjectName');
-
-                //             let selectedSubject = '';
-
-                //             // If a subject is selected, capture the subject name
-                //             if (selectedSubjectElement) {
-                //                 selectedSubject = selectedSubjectElement.innerText.trim();
-                //                 console.log(`Selected Subject: ${selectedSubject}`);
-
-                //                 // Send the selected subject event to Salesforce (or handle as needed)
-                //                 SalesforceInteractions.sendEvent({
-                //                     interaction: {
-                //                         name: 'DoubtsSubjectSelected',
-                //                         eventType: 'CustomEvent',
-                //                         attributes: {
-                //                             subjectsssss: selectedSubject
-                //                         }
-                //                     }
-                //                 });
-                //             } else {
-                //                 console.log("No subject selected");
-                //             }
-                //         }),
-
-                //     // Add click event listener to subject options to toggle the selected class
-                //     listener("click", ".subject-option", (event) => {
-                //     // Only proceed if the clicked element is a subject option
-                //     const clickedOption = event.target.closest('.subject-option');
-
-                //     if (clickedOption) {
-                //         // Remove 'selected' class from all subject options
-                //         document.querySelectorAll('.subject-option').forEach(opt => opt.classList.remove('selected'));
-
-                //         // Add 'selected' class to the clicked subject
-                //         clickedOption.classList.add('selected');
-                //     }
-                // }),
-                // Listener to store the selected subject in sessionStorage
                 listener("click", ".subject-option", (event) => {
                     // Only proceed if the clicked element is a subject option
                     const clickedOption = event.target.closest('.subject-option');
@@ -2264,28 +2023,71 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 }),
 
-                // listener("click", ".done", (event) => { 
-
-                //     console.log("Student uploaded photo");
-                //     SalesforceInteractions.sendEvent({
-                //         interaction: {
-                //             name: 'Doubt Photo upload',
-                //             eventType: 'CustomEvent',
-                //             attributes: {
-                //                 Doneclicked : "yes"
-                //             }
-                //         }
-                //     });
-
-                // }),
-
-
 
             ]
         };
 
 
+        const selflearn = {
+            name: 'SelfLearn',
+            isMatch: () => /\/subject/.test(window.location.href),
 
+            listeners: [
+
+                listener("click", ".SLV2-chapter-box", (event) => {
+                    console.log("Chapter clicked");
+                
+                    // Find the heading inside the clicked chapter
+                    const chapterBox = event.target.closest(".SLV2-chapter-box");
+                    const headingElement = chapterBox?.querySelector(".SLV2-chapter-info-heading");
+
+
+                    const subjectElement = document.querySelector(".SLV2-page-banner-title");
+                    const subject = subjectElement?.textContent.trim();
+                    console.log(subject);
+                
+                    if (headingElement) {
+                        const chapterName = headingElement.textContent.trim();
+                        console.log(`Chapter Name: ${chapterName}`);
+                
+                        // Send the chapter click event to Salesforce
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: 'Chapter',
+                                eventType: 'CustomEvent',
+                                attributes: {
+                                    Subject: subject,
+                                    ChapterName: chapterName
+                                }
+                            }
+                        });
+                    } else {
+                        console.log("Chapter name not found");
+                    }
+                }),
+                
+                
+                listener("click", ".SLV2-popup-blue-btn", (event) => {
+                    console.log("Go to Subscriptions clicked");
+                
+                    // Get the subject from the page banner
+                    const subjectElement = document.querySelector(".SLV2-page-banner-title");
+                    const subject = subjectElement?.textContent.trim();
+                
+                    // Send event to Salesforce
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: 'Go To Subscriptions',
+                            eventType: 'selfLearn',
+                            attributes: {
+                                Subject: subject || ''
+                            }
+                        }
+                    });
+                })
+
+            ]
+        };
 
 
         const pageTypeDefault = {
@@ -2295,7 +2097,7 @@ document.addEventListener("DOMContentLoaded", function () {
         SalesforceInteractions.initSitemap({
             global,
             pageTypeDefault,
-            pageTypes: [ReportPage, RegistrationSuccessful123, homepage, StudentPage, Subscription, PaymentCapture, DoubtsPage]
+            pageTypes: [ReportPage,ViewReportPage,RegistrationSuccessful123, homepage, StudentPage, Subscription, PaymentCapture, DoubtsPage,selflearn]
         })
 
     });
