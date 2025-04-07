@@ -995,6 +995,13 @@
           "isCurrencyIsoCode": false
         },
         {
+          "masterLabel": "chapterName",
+          "dataType": "Text",
+          "developerName": "attributesChapterName",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
           "masterLabel": "classNameAttribute",
           "dataType": "Text",
           "developerName": "attributesClassName",
@@ -1213,7 +1220,7 @@
           "isCurrencyIsoCode": false
         }
       ],
-      "fieldCount": 35,
+      "fieldCount": 36,
       "availabilityStatusLabel": {
         "label": "In Use",
         "rawValue": "INUSE"

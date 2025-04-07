@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }).then(() => {
         // set the log level during sitemap development to see potential problems
-        console.log('Salesforce Interactions WEB SDK is  is ready');
+        console.log('Salesforce Interactions WEB SDK is aready');
         SalesforceInteractions.setLoggingLevel('DEBUG');
 
 
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const stuexamName = examNameElement ? examNameElement.textContent.trim() : 'Exam name not found';
 
                 console.log("Exam Name:", stuexamName);
-                sessionStorage.setItem("ExamName", stuexamName);
+              //  sessionStorage.setItem("ExamName", stuexamName);
                 const elements = document.querySelectorAll('.UNFAPP-cunt.UNFAPP-elips');
                 console.log("Checking elements for View Report");
 
@@ -403,23 +403,6 @@ document.addEventListener("DOMContentLoaded", function () {
         const global = {
             listeners: [
 
-                // listener("click", ".styles_signInButtonSmall__KWWH2", (event) => {
-                //     console.log("Sign-in button clicked");
-
-                //     // Capture the event in Salesforce
-                //     SalesforceInteractions.sendEvent({
-                //         interaction: {
-                //             name: "Sign-In Clicked",
-                //             catalogObject: {
-                //                 type: 'Button',
-                //                 id: 'signin-button',
-                //             },
-                //         },
-                //     });
-                // }),
-
-
-
                 // login with otp
 
 
@@ -541,26 +524,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 //view solution due to angular issue writing here
 
 
-                listener("click", ".btn.UNFAPP-asmnt-blue-hdrbtn.ng-star-inserted", (event) => {
-                    console.log("In view test report page");
+                // listener("click", ".btn.UNFAPP-asmnt-blue-hdrbtn.ng-star-inserted", (event) => {
+                //     console.log("In view test report page");
 
                    
-                       // const examContainer = document.querySelector("h3.UNFAPP-hdng.UNFAPP-main-hdng");
-                        const examName =  sessionStorage.getItem("ExamName") || "Unknown Test";
+                //        // const examContainer = document.querySelector("h3.UNFAPP-hdng.UNFAPP-main-hdng");
+                //         const examName =  sessionStorage.getItem("ExamName") || "Unknown Test";
 
-                        console.log("Captured Exam Name:", examName);
+                //         console.log("Captured Exam Name:", examName);
 
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: 'View Solutions',
-                                eventType: 'CustomEvent',
-                                attributes: {
-                                    ExamName: examName,
-                                },
-                            },
-                        });
+                //         SalesforceInteractions.sendEvent({
+                //             interaction: {
+                //                 name: 'View Solutions',
+                //                 eventType: 'CustomEvent',
+                //                 attributes: {
+                //                     ExamName: examName,
+                //                 },
+                //             },
+                //         });
                     
-                }),
+                // }),
 
 
                 listener("click", ".heroSection_prdrankbtn__oLW5s", (event) => {
@@ -951,15 +934,51 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
 
-        // const ViewReportPage = {
-        //     name: 'ViewReportPage',
-        //     isMatch: () => /\/viewtestreport/.test(window.location.href),
+        //viewreport solutions button click
 
-        //     listeners: [
-                
-
-        //     ]
-        // };
+        const ViewReportPage = {
+            name: 'ViewReportPage',
+            isMatch: () => /\/viewtestreport/.test(window.location.href),
+        
+            onEnter: () => {
+                console.log("Entered ViewReportPage");
+        
+                // Wait briefly and store exam name after DOM updates
+                setTimeout(storeExamNameOnPageLoad, 500); 
+            },
+        
+            listeners: [
+                listener("click", ".btn.UNFAPP-asmnt-blue-hdrbtn.ng-star-inserted", () => {
+                    console.log(" Clicked View Solutions");
+        
+                    const storedExamName = sessionStorage.getItem("examName") || "Unknown Exam";
+                    console.log(" Retrieved exam name:", storedExamName);
+        
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: 'View Solutions',
+                            eventType: 'CustomEvent',
+                            attributes: {
+                                ExamName: storedExamName,
+                            },
+                        },
+                    });
+                }),
+            ],
+        };
+        
+        function storeExamNameOnPageLoad() {
+            const examElement = document.querySelector("h3.UNFAPP-hdng.UNFAPP-main-hdng");
+            if (examElement) {
+                const examName = examElement.textContent.trim();
+                console.log("📥 Stored exam name on page load:", examName);
+                sessionStorage.setItem("examName", examName);
+            } else {
+                console.warn(" Exam name not found on page load.");
+            }
+        }
+        
+        
 
 
         const homepage = {
@@ -1470,32 +1489,39 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         console.log("Sending event to Salesforce...");
 
-                        // Fire event to Salesforce
+                        
                         SalesforceInteractions.sendEvent({
                             interaction: {
                                 name: "Add To Cart",
                                 lineItem: {
+                                    // PackageName : packageName,
+                                    price : parseFloat(packagePrice),
                                     catalogObjectType: "Product",
                                     catalogObjectId: "product-1",
-                                    quantity: 1,  // Keep this as a number, not a string
-                                    price: parseFloat(packagePrice),  // Ensure this is correctly formatted
-                                    currency: currency,  // Keep currency as a string
+                                    quantity: 1,  
+                                    // currency: currency,  
 
-                                }
+                                attributes: {
+                                    attributesPackageName: packageName,
+                                },
+                            }
+
                             }
                         });
 
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: 'Subscription',
-                                eventType: 'CustomEvent',
-                                attributes: {
-                                    PackageName: packageName,
-                                },
-                            },
-                        });
+                        // SalesforceInteractions.sendEvent({
+                        //     interaction: {
+                        //         name: 'Add to cart',
+                        //         eventType: 'Cart Item',
+                        //         attributes: {
+                        //             PackageName: packageName,
+                        //             price : parseFloat(packagePrice),
+                        //         },
+                        //     },
+                        // });
                     }
                 }),
+
 
 
 
@@ -1643,7 +1669,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             grandTotal
                         };
 
-
                         const packages = document.querySelectorAll(".SUBCRP-cart-package-box");
 
                         let lineItems = [];
@@ -1673,6 +1698,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             lineItems.push({
                                 catalogObjectType: "Product",   //check here
                                 catalogObjectId: `product-${index + 1}`, //check here
+
                                 quantity: 1,
                                 price: parseFloat(price1),
                                 // StartDate: 2025-12-30,
@@ -2010,7 +2036,46 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
 
+        const selflearn = {
+            name: 'SelfLearn',
+            isMatch: () => /\/subject/.test(window.location.href),
 
+            listeners: [
+
+                listener("click", ".SLV2-chapter-box", (event) => {
+                    console.log("Chapter clicked");
+                
+                    // Find the heading inside the clicked chapter
+                    const chapterBox = event.target.closest(".SLV2-chapter-box");
+                    const headingElement = chapterBox?.querySelector(".SLV2-chapter-info-heading");
+
+
+                    const subjectElement = document.querySelector(".SLV2-page-banner-title");
+                    const subject = subjectElement?.textContent.trim();
+                    console.log(subject);
+                
+                    if (headingElement) {
+                        const chapterName = headingElement.textContent.trim();
+                        console.log(`Chapter Name: ${chapterName}`);
+                
+                        // Send the chapter click event to Salesforce
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: 'Chapter',
+                                eventType: 'CustomEvent',
+                                attributes: {
+                                    Subject: subject,
+                                    ChapterName: chapterName
+                                }
+                            }
+                        });
+                    } else {
+                        console.log("Chapter name not found");
+                    }
+                })               
+
+            ]
+        };
 
 
         const pageTypeDefault = {
@@ -2020,7 +2085,7 @@ document.addEventListener("DOMContentLoaded", function () {
         SalesforceInteractions.initSitemap({
             global,
             pageTypeDefault,
-            pageTypes: [ReportPage,RegistrationSuccessful123, homepage, StudentPage, Subscription, PaymentCapture, DoubtsPage]
+            pageTypes: [ReportPage,ViewReportPage,RegistrationSuccessful123, homepage, StudentPage, Subscription, PaymentCapture, DoubtsPage,selflearn]
         })
 
     });
