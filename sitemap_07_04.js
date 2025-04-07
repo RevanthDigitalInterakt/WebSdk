@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }).then(() => {
         // set the log level during sitemap development to see potential problems
-        console.log('Salesforce Interactions WEB SDK is           aready');
+        console.log('Salesforce Interactions WEB SDK is           a ready');
         SalesforceInteractions.setLoggingLevel('DEBUG');
 
 
@@ -1489,7 +1489,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         console.log("Sending event to Salesforce...");
 
-                        
+                        function generateUniqueId() {
+                            return `id_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
+                        }
+
                         SalesforceInteractions.sendEvent({
                             interaction: {
                                 name: "Add To Cart",
@@ -1497,29 +1500,17 @@ document.addEventListener("DOMContentLoaded", function () {
                                     // PackageName : packageName,
                                     price : parseFloat(packagePrice),
                                     catalogObjectType: "Product",
-                                    catalogObjectId: "product-1",
+                                    catalogObjectId: generateUniqueId(),
                                     quantity: 1,  
 
                                     attributes: {
-                                        packageName4:"packageName4",
-                                        // attibutespackageName4:"packageName4",
+                                        packageName4:packageName,
                                     },
 
                             }
 
                             }
                         });
-
-                        // SalesforceInteractions.sendEvent({
-                        //     interaction: {
-                        //         name: 'Add to cart',
-                        //         eventType: 'cartItem',
-                        //         attributes: {
-                        //             PackageName1: packageName,
-                        //             // price : parseFloat(packagePrice),
-                        //         },
-                        //     },
-                        // });
                     }
                 }),
 
@@ -2073,25 +2064,64 @@ document.addEventListener("DOMContentLoaded", function () {
                     } else {
                         console.log("Chapter name not found");
                     }
-                }) ,
-               
+                }),
+                
+                
+                // listener("click", ".SLV2-popup-blue-btn", (event) => {
+                //     console.log("Go to Subscriptions clicked");
+                
+                //     // Get the subject from the page banner
+                //     const subjectElement = document.querySelector(".SLV2-page-banner-title");
+                //     const subject = subjectElement?.textContent.trim();
+                
+                //     // Send event to Salesforce
+                //     SalesforceInteractions.sendEvent({
+                //         interaction: {
+                //             name: 'Go To Subscriptions',
+                //             eventType: 'selfLearn',
+                //             attributes: {
+                //                 Subject: subject || ''
+                //             }
+                //         }
+                //     });
+                // })
+
                 listener("click", ".SLV2-popup-blue-btn", (event) => {
-                    console.log("Go to Subscriptions clicked");
+                    const clickedButton = event.target.closest(".SLV2-popup-blue-btn");
+                    const buttonText = clickedButton?.textContent.trim();
                 
-                    // Get the subject from the page banner
+                    // Get subject from the page banner
                     const subjectElement = document.querySelector(".SLV2-page-banner-title");
-                    const subject = subjectElement?.textContent.trim();
+                    const subject = subjectElement?.textContent.trim() || '';
                 
-                    // Send event to Salesforce
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: 'Go To Subscriptions',
-                            eventType: 'selfLearn',
-                            attributes: {
-                                Subject: subject || ''
+                    if (buttonText === "Go to Subscriptions") {
+                        console.log("Go to Subscriptions clicked");
+                
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: 'Go To Subscriptions',
+                                eventType: 'selfLearn',
+                                attributes: {
+                                    Subject: subject
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else if (buttonText === "Explore Chapter") {
+                        console.log("Explore Chapter clicked");
+                
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: 'Explore Chapter',
+                                eventType: 'selfLearn',
+                                attributes: {
+                                    Subject: subject
+                                    // You can also grab chapter name here if needed
+                                }
+                            }
+                        });
+                    } else {
+                        console.log("Unknown SLV2-popup-blue-btn click");
+                    }
                 })
                 
 
