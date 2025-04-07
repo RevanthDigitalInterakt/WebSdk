@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }).then(() => {
         // set the log level during sitemap development to see potential problems
-        console.log('Salesforce Interactions WEB SDK is aready');
+        console.log('Salesforce Interactions WEB SDK is           aready');
         SalesforceInteractions.setLoggingLevel('DEBUG');
 
 
@@ -1499,23 +1499,27 @@ document.addEventListener("DOMContentLoaded", function () {
                                     catalogObjectType: "Product",
                                     catalogObjectId: "product-1",
                                     quantity: 1,  
-                                    // currency: currency,  
+
+                                    attributes: {
+                                        packageName4:"packageName4",
+                                        // attibutespackageName4:"packageName4",
+                                    },
 
                             }
 
                             }
                         });
 
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: 'Add to cart',
-                                eventType: 'cartItem',
-                                attributes: {
-                                    PackageName: packageName,
-                                    // price : parseFloat(packagePrice),
-                                },
-                            },
-                        });
+                        // SalesforceInteractions.sendEvent({
+                        //     interaction: {
+                        //         name: 'Add to cart',
+                        //         eventType: 'cartItem',
+                        //         attributes: {
+                        //             PackageName1: packageName,
+                        //             // price : parseFloat(packagePrice),
+                        //         },
+                        //     },
+                        // });
                     }
                 }),
 
@@ -2069,7 +2073,27 @@ document.addEventListener("DOMContentLoaded", function () {
                     } else {
                         console.log("Chapter name not found");
                     }
-                })               
+                }) ,
+               
+                listener("click", ".SLV2-popup-blue-btn", (event) => {
+                    console.log("Go to Subscriptions clicked");
+                
+                    // Get the subject from the page banner
+                    const subjectElement = document.querySelector(".SLV2-page-banner-title");
+                    const subject = subjectElement?.textContent.trim();
+                
+                    // Send event to Salesforce
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: 'Go To Subscriptions',
+                            eventType: 'selfLearn',
+                            attributes: {
+                                Subject: subject || ''
+                            }
+                        }
+                    });
+                })
+                
 
             ]
         };
