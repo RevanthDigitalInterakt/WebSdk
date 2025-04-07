@@ -1,3 +1,5 @@
+//sitemap
+
 document.addEventListener("DOMContentLoaded", function () {
     SalesforceInteractions.init({
         cookieDomain: 'devinfinitylearn.in',
