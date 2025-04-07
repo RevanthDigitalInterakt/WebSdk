@@ -1,4 +1,4 @@
-//sitemap v2.0
+//sitemap v1.0
 
 document.addEventListener("DOMContentLoaded", function () {
     SalesforceInteractions.init({
