@@ -367,15 +367,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-
-
-
-
-
-
-
-
-
         function firstpage() {
 
 
@@ -1384,7 +1375,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Send event to Salesforce with additional information
                     SalesforceInteractions.sendEvent({
                         interaction: {
+<<<<<<< HEAD
                             name: "Phone Icon Clicked",
+=======
+                            name: "Phone Icon",  //icon click
+>>>>>>> 74247f1 (code revert to icons)
                             eventType: 'icon',
                             attributes: {
                                 ContactedChannel: "Phone"
@@ -1399,7 +1394,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Send event to Salesforce with additional information
                     SalesforceInteractions.sendEvent({
                         interaction: {
+<<<<<<< HEAD
                             name: "whatsapp Icon",
+=======
+                            name: "whatsapp Icon",  //icon click
+>>>>>>> 74247f1 (code revert to icons)
                             eventType: 'icon',
                             attributes: {
                                 ContactedChannel: "WhatsApp"
