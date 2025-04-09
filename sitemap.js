@@ -1369,6 +1369,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: "Phone Icon Clicked",
+                            eventType: 'icon',
                             attributes: {
                                 ContactedChannel: "Phone"
                             }
