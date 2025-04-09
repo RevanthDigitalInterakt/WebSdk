@@ -1333,6 +1333,13 @@
           "isCurrencyIsoCode": false
         },
         {
+          "masterLabel": "contactedChannelAttribute",
+          "dataType": "Text",
+          "developerName": "attributesContactedChannel",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
           "masterLabel": "category",
           "dataType": "Text",
           "developerName": "category",
@@ -1383,7 +1390,7 @@
           "isCurrencyIsoCode": false
         }
       ],
-      "fieldCount": 8,
+      "fieldCount": 9,
       "availabilityStatusLabel": {
         "label": "In Use",
         "rawValue": "INUSE"
