@@ -1323,8 +1323,15 @@
       "developerName": "icon",
       "masterLabel": "Icon Click",
       "category": "Engagement",
-      "availabilityStatus": "AVAILABLE",
+      "availabilityStatus": "INUSE",
       "externalDataTranFields": [
+        {
+          "masterLabel": "label",
+          "dataType": "Text",
+          "developerName": "attributesLabel",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
         {
           "masterLabel": "category",
           "dataType": "Text",
@@ -1340,17 +1347,18 @@
           "isCurrencyIsoCode": false
         },
         {
-          "masterLabel": "deviceId",
-          "dataType": "Text",
-          "developerName": "deviceId",
-          "isDataRequired": true,
-          "isCurrencyIsoCode": false
-        },
-        {
           "masterLabel": "sessionId",
           "dataType": "Text",
           "developerName": "sessionId",
           "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "eventId",
+          "dataType": "Text",
+          "developerName": "eventId",
+          "isDataRequired": true,
+          "primaryIndexOrder": 1,
           "isCurrencyIsoCode": false
         },
         {
@@ -1368,18 +1376,17 @@
           "isCurrencyIsoCode": false
         },
         {
-          "masterLabel": "eventId",
+          "masterLabel": "deviceId",
           "dataType": "Text",
-          "developerName": "eventId",
+          "developerName": "deviceId",
           "isDataRequired": true,
-          "primaryIndexOrder": 1,
           "isCurrencyIsoCode": false
         }
       ],
-      "fieldCount": 7,
+      "fieldCount": 8,
       "availabilityStatusLabel": {
-        "label": "Available",
-        "rawValue": "AVAILABLE"
+        "label": "In Use",
+        "rawValue": "INUSE"
       },
       "streamingAppLabel": "Infinity_Stage_Website"
     },
@@ -1517,6 +1524,13 @@
           "isCurrencyIsoCode": false
         },
         {
+          "masterLabel": "learnuserId",
+          "dataType": "Text",
+          "developerName": "LearnUserId",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
           "masterLabel": "pageView",
           "dataType": "Number",
           "developerName": "pageView",
@@ -1580,7 +1594,7 @@
           "isCurrencyIsoCode": false
         }
       ],
-      "fieldCount": 27,
+      "fieldCount": 28,
       "availabilityStatusLabel": {
         "label": "In Use",
         "rawValue": "INUSE"
@@ -1757,9 +1771,10 @@
       },
       "streamingAppLabel": "Infinity_Stage_Website"
     },
+
     {
-      "developerName": "order",
-      "masterLabel": "Order",
+      "developerName": "buttonClick",
+      "masterLabel": "Button Click",
       "category": "Engagement",
       "availabilityStatus": "INUSE",
       "externalDataTranFields": [
@@ -1771,10 +1786,81 @@
           "isCurrencyIsoCode": false
         },
         {
+          "masterLabel": "dateTime",
+          "dataType": "DateTime",
+          "developerName": "dateTime",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "deviceId",
+          "dataType": "Text",
+          "developerName": "deviceId",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "sessionId",
+          "dataType": "Text",
+          "developerName": "sessionId",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "eventType",
+          "dataType": "Text",
+          "developerName": "eventType",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "interactionName",
+          "dataType": "Text",
+          "developerName": "interactionName",
+          "isDataRequired": true,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "eventId",
+          "dataType": "Text",
+          "developerName": "eventId",
+          "isDataRequired": true,
+          "primaryIndexOrder": 1,
+          "isCurrencyIsoCode": false
+        }
+      ],
+      "fieldCount": 7,
+      "availabilityStatusLabel": {
+        "label": "In Use",
+        "rawValue": "INUSE"
+      },
+      "streamingAppLabel": "Infinity_Stage_Website"
+    },
+    {
+      "developerName": "order",
+      "masterLabel": "Order",
+      "category": "Engagement",
+      "availabilityStatus": "INUSE",
+      "externalDataTranFields": [
+        {
+          "masterLabel": "subTotal",
+          "dataType": "Number",
+          "developerName": "attributeSubTotal",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
           "masterLabel": "sourceUrlReferrer",
           "dataType": "Text",
           "developerName": "sourceUrlReferrer",
           "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "dateTime",
+          "dataType": "DateTime",
+          "developerName": "dateTime",
+          "isDataRequired": true,
           "isCurrencyIsoCode": false
         },
         {
@@ -1884,14 +1970,14 @@
           "isCurrencyIsoCode": false
         },
         {
-          "masterLabel": "dateTime",
-          "dataType": "DateTime",
-          "developerName": "dateTime",
+          "masterLabel": "category",
+          "dataType": "Text",
+          "developerName": "category",
           "isDataRequired": true,
           "isCurrencyIsoCode": false
         }
       ],
-      "fieldCount": 18,
+      "fieldCount": 19,
       "availabilityStatusLabel": {
         "label": "In Use",
         "rawValue": "INUSE"
@@ -1905,9 +1991,9 @@
       "availabilityStatus": "INUSE",
       "externalDataTranFields": [
         {
-          "masterLabel": "packageName",
+          "masterLabel": "oipackageName",
           "dataType": "Text",
-          "developerName": "attributesPackageName",
+          "developerName": "attributeOiPackageName",
           "isDataRequired": false,
           "isCurrencyIsoCode": false
         },
@@ -1919,9 +2005,23 @@
           "isCurrencyIsoCode": false
         },
         {
+          "masterLabel": "startDate",
+          "dataType": "Date",
+          "developerName": "attributesStartDate",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
           "masterLabel": "subTotal",
           "dataType": "Number",
           "developerName": "attributesSubTotal",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "startDate1",
+          "dataType": "Date",
+          "developerName": "attributeStartDate1",
           "isDataRequired": false,
           "isCurrencyIsoCode": false
         },
@@ -1936,6 +2036,13 @@
           "masterLabel": "validTill",
           "dataType": "Date",
           "developerName": "attributesValidTill",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "validTill1",
+          "dataType": "Date",
+          "developerName": "attributeValidTill1",
           "isDataRequired": false,
           "isCurrencyIsoCode": false
         },
@@ -2032,14 +2139,14 @@
           "isCurrencyIsoCode": false
         },
         {
-          "masterLabel": "startDate",
-          "dataType": "Date",
-          "developerName": "attributesStartDate",
+          "masterLabel": "packageName",
+          "dataType": "Text",
+          "developerName": "attributesPackageName",
           "isDataRequired": false,
           "isCurrencyIsoCode": false
         }
       ],
-      "fieldCount": 19,
+      "fieldCount": 22,
       "availabilityStatusLabel": {
         "label": "In Use",
         "rawValue": "INUSE"

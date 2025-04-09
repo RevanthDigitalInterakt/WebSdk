@@ -13,14 +13,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }).then(() => {
         // set the log level during sitemap development to see potential problems
-        console.log('Salesforce Interactions WEB SDK is anddd ready');
+        console.log('Salesforce Interactions WEB SDK isss ready');
         SalesforceInteractions.setLoggingLevel('DEBUG');
 
 
         let href = window.location.href;
 
+        let hasExecuted = false;
+
         // Monitor the URL for changes
         setInterval(() => {
+
+
+
             if (href !== window.location.href) {
                 href = window.location.href;
 
@@ -45,20 +50,91 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.log("done test report");
                 }
 
-                // if (window.location.href === 'https://student.devinfinitylearn.in/subscription/mycart') {
-                //     console.log("In refresh for payment method");
+                
 
-                //     // Reinitialize Salesforce interactions on the viewtestreport page
-                //     SalesforceInteractions.reinit();
+                if (!hasExecuted && (window.location.href.includes('/payementVerification'))) {
 
-                //     capturePaymentDetails()
-                //     console.log("hiiiiiiiiiiiii")
-
-
-                // }
+                    // console.log("Report details capturing");
+                    hasExecuted = true; // Prevent multiple executions
+                    executeIdPaymentStatus();
+                }
 
             }
         }, 1000);
+
+        function executeIdPaymentStatus(){
+
+            const successElement = document.querySelector(".section-heading");
+
+                    function generateUniqueId() {
+                        return `id_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
+                    }
+
+                    // Payment Success Logic
+                    if (successElement && successElement.innerText.includes("Congratulation")) {
+                        const name = successElement.innerText.replace("Congratulation, ", "").replace("!", "").trim();
+
+                        const text = document.querySelector(".section-subheading.sm")?.innerText || "";
+
+                        const container = document.querySelector('.center-heading-area');
+
+                        let capturedAmount = "0.00";
+
+                        if (container) {
+                            const text1 = container.innerText;
+                            console.log("Full Text:", text);
+
+                            // Match amount like 38,415.02 (with or without ₹ symbol)
+                            const amountMatch = text1.match(/(?:₹\s*)?([\d,]+\.\d{1,2})/);
+                            capturedAmount = amountMatch ? amountMatch[1].replace(/,/g, '') : "0.00";
+
+                            console.log("Captured Amount:", capturedAmount);  // Output: 38415.02
+                        }
+
+
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: "Payment status",
+                                eventType: "payment",
+                                attributes: {
+                                    PaymentStatus: "Congratulations"
+                                }
+                            }
+                        });
+                    }
+
+                    const failureElement = document.querySelector('.SUBCRP-pymnt-fail-error-msg');
+
+                    // Payment Failure Logic
+                    if (failureElement && failureElement.innerText.toLowerCase().includes('failed')) {
+                        const failureText = failureElement.innerText;
+
+                        const container = document.querySelector('.center-heading-area');
+                        const text = container?.innerText || "";
+
+                        // Regex to capture amount with or without ₹ symbol
+                        const amountMatch = text.match(/(?:₹\s*)?([\d,]+\.\d+)/);
+
+                        // Extract amount and remove commas
+                        const capturedAmount = amountMatch ? amountMatch[1].replace(/,/g, '') : "0.00";
+
+                        // Just log it nicely
+                        console.log(`Captured Amount: Rs. ${capturedAmount}`);
+
+                        // PaymentCapture.handlePaymentCaptured("Failed", failedAmount);
+
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: "Payment status captured",
+                                eventType: "payment",
+                                attributes: {
+                                    PaymentStatus: "Failed"
+                                }
+                            }
+                        });
+                    }
+
+        }
 
         // Function to execute when on the View Test Report page
         function executeViewTestReport() {
@@ -68,7 +144,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const stuexamName = examNameElement ? examNameElement.textContent.trim() : 'Exam name not found';
 
                 console.log("Exam Name:", stuexamName);
-              //  sessionStorage.setItem("ExamName", stuexamName);
+                //  sessionStorage.setItem("ExamName", stuexamName);
                 const elements = document.querySelectorAll('.UNFAPP-cunt.UNFAPP-elips');
                 console.log("Checking elements for View Report");
 
@@ -150,19 +226,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Send event to SalesforceInteractions
 
-
-            SalesforceInteractions.sendEvent({
-                interaction: {
-                    name: 'Payment Method captured',
-                    eventType: 'CustomEvent',
-                    attributes: {
-                        PaymentMethod: paymentMethodType,
-                        SubTotal: parseFloat(subtotal),
-                        Discount: parseFloat(discount),
-                        GrandTotal: parseFloat(grandTotal)
+            if (paymentMethodType != "Unknown") {
+                SalesforceInteractions.sendEvent({
+                    interaction: {
+                        name: 'Payment Method captured',
+                        eventType: 'payment',
+                        attributes: {
+                            PaymentMethod: paymentMethodType,
+                            SubTotal: parseFloat(subtotal),
+                            Discount: parseFloat(discount),
+                            GrandTotal: parseFloat(grandTotal)
+                        },
                     },
-                },
-            });
+                });
+            }
         }
 
         // MutationObserver to detect when user manually switches payment method
@@ -173,6 +250,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 let headingElement = document.querySelector(".subscrp-sctn-hdng");
                 let newPaymentMethod = headingElement ? headingElement.textContent.trim() : "";
+
 
                 if (newPaymentMethod !== selectedPaymentMethod) {
                     selectedPaymentMethod = newPaymentMethod; // Update to new method
@@ -198,8 +276,102 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        // Observe changes in the payment method selection
         observer.observe(document.body, { childList: true, subtree: true });
+
+        function handlePaymentClick(event) {
+            const clickedBox = event.currentTarget;
+            const blueBox = clickedBox.closest('.subscrp-blue-brdbox');
+            const methodTitle = blueBox?.querySelector('.subscrp-blue-hdng');
+            const methodName = methodTitle?.innerText.trim() || '';
+        
+            console.log('Payment Method:', methodName);
+        
+            // Extract prices
+            const items = document.querySelectorAll('.SUBCRP-cart-review-list li');
+        
+            let subtotalElement1, discountElement1, grandTotalElement1;
+        
+            items.forEach((item) => {
+                const label = item.querySelector('span')?.innerText?.trim();
+        
+                if (label === 'Subtotal') {
+                    subtotalElement1 = item.querySelector('.review-bold-text');
+                } else if (label?.includes('Discount')) {
+                    discountElement1 = item.querySelector('.review-bold-text');
+                } else if (label === 'Grand Total') {
+                    grandTotalElement1 = item.querySelector('div.review-bold-text, div.review-blue-txt.review-bold-text');
+                }
+            });
+        
+            const subtotal = subtotalElement1?.innerText.replace(/[^\d.]/g, '') || "0";
+            const discount = discountElement1?.innerText.replace(/[^\d.]/g, '') || "0";
+            const grandTotal = grandTotalElement1?.innerText.replace(/[^\d.]/g, '') || "0";
+        
+            console.log('Subtotal:', subtotal);
+            console.log('Discount:', discount);
+            console.log('Grand Total:', grandTotal);
+        
+            SalesforceInteractions.sendEvent({
+                interaction: {
+                    name: "Payment Method",
+                    eventType: "payment",
+                    attributes: {
+                        PaymentMethod: methodName,
+                        SubTotal: parseFloat(subtotal),
+                        Discount: parseFloat(discount),
+                        GrandTotal: parseFloat(grandTotal)
+                    }
+                }
+            });
+        }
+        
+        // Set up the observer
+        const observerpm = new MutationObserver((mutationsList) => {
+            if (window.location.href === "https://student.devinfinitylearn.in/subscription/mycart") {
+                const emiButtons = document.querySelectorAll('.subscrp-emi-bank-name-box');
+                const emimethods = document.querySelectorAll(".subscrp-blue-brdbox-hdr");
+        
+                const headerTexts = Array.from(emimethods).map((method) => method.innerText.trim());
+        
+                const isValidMethod = headerTexts.some(text =>
+                    ["Cardless EMI", "No Cost EMI", "Debit Card EMI", "Credit Card EMI"].includes(text)
+                );
+        
+                if (isValidMethod) {
+                    emiButtons.forEach((btn) => {
+                        if (!btn.hasAttribute('data-listener-attached')) {
+                            btn.addEventListener('click', handlePaymentClick);
+                            btn.setAttribute('data-listener-attached', 'true');
+                            console.log("Event listener attached to EMI button");
+                        }
+                    });
+                }
+            }
+        });
+        
+        // Wait for DOM ready before observing
+        document.addEventListener('DOMContentLoaded', () => {
+            observerpm.observe(document.body, { childList: true, subtree: true });
+        });
+        
+
+      
+
+
+        observerpm.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+
+
+
+
+
+
+
+
+
 
 
         function firstpage() {
@@ -403,9 +575,53 @@ document.addEventListener("DOMContentLoaded", function () {
         const global = {
             listeners: [
 
+                //resend otp
+
+
+                listener("click", ".resendText", (event) => {
+                    console.log("Resend OTP Clicked");
+                
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: 'Resend OTP',
+                            eventType: 'buttonClick',
+                        }
+                    });
+                }),
+
+                //navbar 
+                listener("click", ".UNFAPP-newwdashbrd-lftnav-area", (event) => {
+                    // Find the closest anchor tag from the click target
+                    const anchor = event.target.closest("a");
+
+                    // Make sure the click happened on a sidebar link
+                    if (!anchor || !event.currentTarget.contains(anchor)) return;
+
+                    // Extract the label (menu text like Home, Learn, etc.)
+                    const label = anchor.querySelector("span")?.textContent?.trim();
+
+                    if (label) {
+                        console.log("Menu Clicked:", label);
+
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: 'Side NavBar',
+                                eventType: 'icon',
+                                attributesLabel: label
+
+                            }
+                        });
+
+
+                    }
+                }),
+
+
+
+                //profile
                 listener("click", ".dropdown-toggle", (event) => {
                     console.log("Profile icon clicked");
-                
+
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: 'Profile Icon',
@@ -415,15 +631,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     });
                 }),
-                
 
-            
+
+
                 //logo click
 
 
                 listener("click", ".headerlogo", (event) => {
                     console.log("Logo clicked");
-                
+
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: 'Infinity Logo Click',
@@ -433,7 +649,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     });
                 }),
-                
+
 
                 // login with otp
 
@@ -521,9 +737,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
                 //forgot password
-                
-                
-                
+
+
+
                 listener("click", ".forgetPassword", (event) => {
                     console.log("in forgot password");
 
@@ -559,7 +775,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 // listener("click", ".btn.UNFAPP-asmnt-blue-hdrbtn.ng-star-inserted", (event) => {
                 //     console.log("In view test report page");
 
-                   
+
                 //        // const examContainer = document.querySelector("h3.UNFAPP-hdng.UNFAPP-main-hdng");
                 //         const examName =  sessionStorage.getItem("ExamName") || "Unknown Test";
 
@@ -574,7 +790,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 //                 },
                 //             },
                 //         });
-                    
+
                 // }),
 
 
@@ -971,21 +1187,21 @@ document.addEventListener("DOMContentLoaded", function () {
         const ViewReportPage = {
             name: 'ViewReportPage',
             isMatch: () => /\/viewtestreport/.test(window.location.href),
-        
+
             onEnter: () => {
                 console.log("Entered ViewReportPage");
-        
+
                 // Wait briefly and store exam name after DOM updates
-                setTimeout(storeExamNameOnPageLoad, 500); 
+                setTimeout(storeExamNameOnPageLoad, 500);
             },
-        
+
             listeners: [
                 listener("click", ".btn.UNFAPP-asmnt-blue-hdrbtn.ng-star-inserted", () => {
                     console.log(" Clicked View Solutions");
-        
+
                     const storedExamName = sessionStorage.getItem("examName") || "Unknown Exam";
                     console.log(" Retrieved exam name:", storedExamName);
-        
+
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: 'View Solutions',
@@ -998,7 +1214,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }),
             ],
         };
-        
+
         function storeExamNameOnPageLoad() {
             const examElement = document.querySelector("h3.UNFAPP-hdng.UNFAPP-main-hdng");
             if (examElement) {
@@ -1009,8 +1225,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.warn(" Exam name not found on page load.");
             }
         }
-        
-        
+
+
 
 
         const homepage = {
@@ -1167,7 +1383,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Send event to Salesforce with additional information
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Phone Icon Clicked",
+                            name: "Phone Icon Clicked",  //icon click
                             eventType: 'CustomEvent',
                             attributes: {
                                 ContactedChannel: "Phone"
@@ -1182,7 +1398,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Send event to Salesforce with additional information
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "whatsapp Icon Clicked",
+                            name: "whatsapp Icon Clicked",  //icon click
                             eventType: 'CustomEvent',
                             attributes: {
                                 ContactedChannel: "WhatsApp"
@@ -1278,7 +1494,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.log("Course name could not be found.");
                     }
                 }),
-               
+
             ]
         }
 
@@ -1482,7 +1698,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
         };
 
-      
+
 
         let selectedPaymentMethod = "UPI"; // Default selection when landing on the page
 
@@ -1530,16 +1746,16 @@ document.addEventListener("DOMContentLoaded", function () {
                                 name: "Add To Cart",
                                 lineItem: {
                                     // PackageName : packageName,
-                                    price : parseFloat(packagePrice),
+                                    price: parseFloat(packagePrice),
                                     catalogObjectType: "Product",
                                     catalogObjectId: generateUniqueId(),
-                                    quantity: 1,  
+                                    quantity: 1,
 
                                     attributes: {
-                                        packageName4:packageName,
+                                        packageName4: packageName,
                                     },
 
-                            }
+                                }
 
                             }
                         });
@@ -1722,11 +1938,9 @@ document.addEventListener("DOMContentLoaded", function () {
                                 quantity: 1,
                                 price: parseFloat(price1),
                                 attributes: {
-                                    PackageName: packageName,
-                                    StartDate: startDatec,
-                                    ValidTill: validTillc,
-                                    // SubTotal: parseFloat(subtotal),
-                                    SubTotal1: parseFloat(subtotal),
+                                    OiPackageName: packageName,
+                                    StartDate1: startDatec,
+                                    ValidTill1: validTillc,
                                 }
                             });
 
@@ -1754,28 +1968,31 @@ document.addEventListener("DOMContentLoaded", function () {
                         function convertToISO(dateStr) {
 
 
-                            if (dateStr === "N/A") return "N/A"; 
+                            if (dateStr === "N/A") return "N/A";
 
-                          
+
                             dateStr = dateStr.replace(/(\d+)(st|nd|rd|th)/, "$1");
 
                             // Convert to ISO format (YYYY-MM-DD)
                             const dateObj = new Date(dateStr);
-                            return dateObj.toISOString().split("T")[0]; 
+                            return dateObj.toISOString().split("T")[0];
                         }
 
                         SalesforceInteractions.sendEvent({
                             interaction: {
                                 name: 'Purchase',
                                 order: {
-                                    id: new Date().getTime().toString(),  
-                                    totalValue: parseFloat(grandTotal),                                 
+                                    id: new Date().getTime().toString(),
+                                    totalValue: parseFloat(grandTotal),
+                                    attributes: {
+                                        SubTotal: parseFloat(subtotal),
+                                    },
                                     lineItems
                                 }
                             }
                         });
 
-                
+
 
                         // SalesforceInteractions.sendEvent({
                         //     interaction: {
@@ -1841,7 +2058,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: "Payment Method",
-                            eventType: "CustomEvent",
+                            eventType: "payment",
                             attributes: {
                                 PaymentMethod: paymentMethod,
                                 SubTotal: parseFloat(finalsubtotal),
@@ -1851,6 +2068,65 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     });
                 }),
+
+                // listener("click", ".subscrp-emi-bank-name-box", (event) => {
+
+                //     console.log("In the EMI payment");
+                //     const clickedBox = event.currentTarget;
+                //     const methodTitle = clickedBox.querySelector('.emi-bank-title');
+                //     let methodName;
+                //     if (methodTitle) {
+                //         methodName = methodTitle.textContent.trim();
+                //         console.log(methodName); // e.g., "Jodo Cred"
+                //     }
+                //     const items = document.querySelectorAll('.SUBCRP-cart-review-list li');
+
+                //     let subtotalElement1, discountElement1, grandTotalElement1;
+
+                //     items.forEach((item) => {
+                //         const label = item.querySelector('span')?.innerText?.trim();
+
+                //         if (label === 'Subtotal') {
+                //             subtotalElement1 = item.querySelector('.review-bold-text');
+                //         } else if (label.includes('Discount')) {
+                //             discountElement1 = item.querySelector('.review-bold-text');
+                //         } else if (label === 'Grand Total') {
+                //             grandTotalElement1 = item.querySelector('div.review-bold-text, div.review-blue-txt.review-bold-text');
+                //         }
+                //     });
+
+                //     let subtotalP = subtotalElement1?.innerText;
+                //     let finalsubtotal = subtotalP.replace(/[^\d.]/g, '');
+                //     finalsubtotal = finalsubtotal.replace(/^\.|(?<=\.)\.+/g, '');
+
+
+                //     let DiscountP = discountElement1?.innerText || 0;
+                //     let finaldiscount = DiscountP ? DiscountP.replace(/[^\d.]/g, '').replace(/^\.|(?<=\.)\.+/g, '') : 0;
+
+                //     let GrandTotalP = grandTotalElement1?.innerText;
+                //     let finalGrandTotal = GrandTotalP.replace(/[^\d.]/g, '');
+                //     finalGrandTotal = finalGrandTotal.replace(/^\.|(?<=\.)\.+/g, '');
+
+                //     console.log('Subtotal innerText:', finalsubtotal);
+                //     console.log('Discount innerText:', finaldiscount);
+                //     console.log('Grand Total innerText:', finalGrandTotal);
+
+
+                //     SalesforceInteractions.sendEvent({
+                //         interaction: {
+                //             name: "Payment Method",
+                //             eventType: "payment",
+                //             attributes: {
+                //                 PaymentMethod: methodName,
+                //                 SubTotal: parseFloat(finalsubtotal),
+                //                 Discount: parseFloat(finaldiscount),
+                //                 GrandTotal: parseFloat(finalGrandTotal)
+                //             }
+                //         }
+                //     });
+
+
+                // }),
 
 
             ],
@@ -1862,142 +2138,129 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-        const PaymentCapture = {
-            name: "Payment Status",
-            isMatch: () => /\/subscription\/payementVerification/.test(window.location.href),
-            paymentCaptured: false,  // New flag to avoid double capture
+        // const PaymentCapture = {
+        //     name: "Payment Status",
+        //     isMatch: () => /\/subscription\/payementVerification/.test(window.location.href),
+        //     paymentCaptured: false,  // New flag to avoid double capture
 
-            observePaymentStatus: function () {
-                console.log("PaymentCapture started");
+        //     observePaymentStatus: function () {
+        //         console.log("PaymentCapture started");
 
-                const capturePaymentStatus = () => {
-                    if (PaymentCapture.paymentCaptured) return;  // Don't capture twice
+        //         const capturePaymentStatus = () => {
+        //             if (PaymentCapture.paymentCaptured) return;  // Don't capture twice
 
-                    const successElement = document.querySelector(".section-heading");
+        //             const successElement = document.querySelector(".section-heading");
 
-                    function generateUniqueId() {
-                        return `id_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
-                    }
+        //             function generateUniqueId() {
+        //                 return `id_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
+        //             }
 
-                    // Payment Success Logic
-                    if (successElement && successElement.innerText.includes("Congratulation")) {
-                        const name = successElement.innerText.replace("Congratulation, ", "").replace("!", "").trim();
+        //             // Payment Success Logic
+        //             if (successElement && successElement.innerText.includes("Congratulation")) {
+        //                 const name = successElement.innerText.replace("Congratulation, ", "").replace("!", "").trim();
 
-                        const text = document.querySelector(".section-subheading.sm")?.innerText || "";
+        //                 const text = document.querySelector(".section-subheading.sm")?.innerText || "";
 
-                        const container = document.querySelector('.center-heading-area');  // Common container
-                        if (container) {
-                            const text = container.innerText;  // Get all the text inside
-                            console.log("Captured Container Text:", text);
+        //                 const container = document.querySelector('.center-heading-area');
+
+        //                 let capturedAmount = "0.00";
+
+        //                 if (container) {
+        //                     const text1 = container.innerText;
+        //                     console.log("Full Text:", text);
+
+        //                     // Match amount like 38,415.02 (with or without ₹ symbol)
+        //                     const amountMatch = text1.match(/(?:₹\s*)?([\d,]+\.\d{1,2})/);
+        //                     capturedAmount = amountMatch ? amountMatch[1].replace(/,/g, '') : "0.00";
+
+        //                     console.log("Captured Amount:", capturedAmount);  // Output: 38415.02
+        //                 }
 
 
-                            const amountMatch1 = text.match(/₹\s*([\d,]+\.\d{1,2})/);
-                            let capturedAmount = amountMatch1 ? amountMatch1[1].replace(/,/g, '') : "0.00";
 
-                            console.log(`Captured Amount: ₹${capturedAmount}`);
-                        }
+        //                 PaymentCapture.paymentCaptured = true;  // Prevent re-trigger
+        //                 console.log(`Payment Success - Name: ${name}, Amount: ${capturedAmount}`);
 
+        //                 // PaymentCapture.handlePaymentCaptured("Success", successAmount);
 
-                        PaymentCapture.paymentCaptured = true;  // Prevent re-trigger
-                        console.log(`Payment Success - Name: ${name}, Amount: ${capturedAmount}`);
+        //                 SalesforceInteractions.sendEvent({
+        //                     interaction: {
+        //                         name: "Payment status",
+        //                         eventType: "payment",
+        //                         attributes: {
+        //                             PaymentStatus: "Congratulations"
+        //                         }
+        //                     }
+        //                 });
 
-                        // PaymentCapture.handlePaymentCaptured("Success", successAmount);
+                        
+        //                 PaymentCapture.disconnectObserver();
+        //                 return;
+        //             }
 
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: "Payment status",
-                                eventType: "CustomEvent",
-                                attributes: {
-                                    PaymentStatus: "Congratulations"
-                                }
-                            }
-                        });
+        //             const failureElement = document.querySelector('.SUBCRP-pymnt-fail-error-msg');
 
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: 'CoursePurchase',
-                                order: {
-                                    id: generateUniqueId(),   //check this
-                                    totalValue: parseFloat(capturedAmount)
-                                }
-                            }
-                        });
-                        PaymentCapture.disconnectObserver();
-                        return;
-                    }
+        //             // Payment Failure Logic
+        //             if (failureElement && failureElement.innerText.toLowerCase().includes('failed')) {
+        //                 const failureText = failureElement.innerText;
 
-                    const failureElement = document.querySelector('.SUBCRP-pymnt-fail-error-msg');
+        //                 const container = document.querySelector('.center-heading-area');
+        //                 const text = container?.innerText || "";
 
-                    // Payment Failure Logic
-                    if (failureElement && failureElement.innerText.toLowerCase().includes('failed')) {
-                        const failureText = failureElement.innerText;
+        //                 // Regex to capture amount with or without ₹ symbol
+        //                 const amountMatch = text.match(/(?:₹\s*)?([\d,]+\.\d+)/);
 
-                        const container = document.querySelector('.center-heading-area');
-                        const text = container?.innerText || "";
+        //                 // Extract amount and remove commas
+        //                 const capturedAmount = amountMatch ? amountMatch[1].replace(/,/g, '') : "0.00";
 
-                        // Regex to capture amount with or without ₹ symbol
-                        const amountMatch = text.match(/(?:₹\s*)?([\d,]+\.\d+)/);
+        //                 // Just log it nicely
+        //                 console.log(`Captured Amount: Rs. ${capturedAmount}`);
 
-                        // Extract amount and remove commas
-                        const capturedAmount = amountMatch ? amountMatch[1].replace(/,/g, '') : "0.00";
+        //                 // PaymentCapture.handlePaymentCaptured("Failed", failedAmount);
 
-                        // Just log it nicely
-                        console.log(`Captured Amount: Rs. ${capturedAmount}`);
+        //                 SalesforceInteractions.sendEvent({
+        //                     interaction: {
+        //                         name: "Payment status captured",
+        //                         eventType: "payment",
+        //                         attributes: {
+        //                             PaymentStatus: "Failed"
+        //                         }
+        //                     }
+        //                 });
+                       
 
-                        // PaymentCapture.handlePaymentCaptured("Failed", failedAmount);
+        //                 PaymentCapture.disconnectObserver();
+        //                 return;
+        //             }
 
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: "Payment status captured",
-                                eventType: "CustomEvent",
-                                attributes: {
-                                    PaymentStatus: "Failed"
-                                }
-                            }
-                        });
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: 'CoursePurchase',
-                                order: {
-                                    id: generateUniqueId(), //check this again
-                                    totalValue: parseFloat(capturedAmount)
+        //             console.log("Payment status not detected yet");
+        //         };
 
-                                }
-                            }
-                        });
+        //         // Run capture immediately
+        //         capturePaymentStatus();
 
-                        PaymentCapture.disconnectObserver();
-                        return;
-                    }
+        //         // Set up observer for dynamically loaded content
+        //         this.observer = new MutationObserver(capturePaymentStatus);
+        //         this.observer.observe(document.body, { childList: true, subtree: true });
+        //     },
 
-                    console.log("Payment status not detected yet");
-                };
+        //     // handlePaymentCaptured: function (status, amount) {
+        //     //     console.log(`Payment Captured - Status: ${status}, Amount: ₹${amount}`);
+        //     //      Additional logic like analytics or tracking can go here if needed.
+        //     // },
 
-                // Run capture immediately
-                capturePaymentStatus();
+        //     disconnectObserver: function () {
+        //         if (this.observer) {
+        //             this.observer.disconnect();
+        //             console.log("Observer disconnected to avoid double capture");
+        //         }
+        //     }
+        // };
 
-                // Set up observer for dynamically loaded content
-                this.observer = new MutationObserver(capturePaymentStatus);
-                this.observer.observe(document.body, { childList: true, subtree: true });
-            },
-
-            // handlePaymentCaptured: function (status, amount) {
-            //     console.log(`Payment Captured - Status: ${status}, Amount: ₹${amount}`);
-            //      Additional logic like analytics or tracking can go here if needed.
-            // },
-
-            disconnectObserver: function () {
-                if (this.observer) {
-                    this.observer.disconnect();
-                    console.log("Observer disconnected to avoid double capture");
-                }
-            }
-        };
-
-        // Start capturing if on correct page
-        if (PaymentCapture.isMatch()) {
-            PaymentCapture.observePaymentStatus();
-        }
+        // // Start capturing if on correct page
+        // if (PaymentCapture.isMatch()) {
+        //     PaymentCapture.observePaymentStatus();
+        // }
 
 
         const DoubtsPage = {
@@ -2063,7 +2326,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 listener("click", ".SLV2-chapter-box", (event) => {
                     console.log("Chapter clicked");
-                
+
                     // Find the heading inside the clicked chapter
                     const chapterBox = event.target.closest(".SLV2-chapter-box");
                     const headingElement = chapterBox?.querySelector(".SLV2-chapter-info-heading");
@@ -2072,11 +2335,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     const subjectElement = document.querySelector(".SLV2-page-banner-title");
                     const subject = subjectElement?.textContent.trim();
                     console.log(subject);
-                
+
                     if (headingElement) {
                         const chapterName = headingElement.textContent.trim();
                         console.log(`Chapter Name: ${chapterName}`);
-                
+
                         // Send the chapter click event to Salesforce
                         SalesforceInteractions.sendEvent({
                             interaction: {
@@ -2092,15 +2355,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.log("Chapter name not found");
                     }
                 }),
-                
-                
+
+
                 // listener("click", ".SLV2-popup-blue-btn", (event) => {
                 //     console.log("Go to Subscriptions clicked");
-                
+
                 //     // Get the subject from the page banner
                 //     const subjectElement = document.querySelector(".SLV2-page-banner-title");
                 //     const subject = subjectElement?.textContent.trim();
-                
+
                 //     // Send event to Salesforce
                 //     SalesforceInteractions.sendEvent({
                 //         interaction: {
@@ -2116,14 +2379,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 listener("click", ".SLV2-popup-blue-btn", (event) => {
                     const clickedButton = event.target.closest(".SLV2-popup-blue-btn");
                     const buttonText = clickedButton?.textContent.trim();
-                
+
                     // Get subject from the page banner
                     const subjectElement = document.querySelector(".SLV2-page-banner-title");
                     const subject = subjectElement?.textContent.trim() || '';
-                
+
                     if (buttonText === "Go to Subscriptions") {
                         console.log("Go to Subscriptions clicked");
-                
+
                         SalesforceInteractions.sendEvent({
                             interaction: {
                                 name: 'Go To Subscriptions',
@@ -2135,7 +2398,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         });
                     } else if (buttonText === "Explore Chapter") {
                         console.log("Explore Chapter clicked");
-                
+
                         SalesforceInteractions.sendEvent({
                             interaction: {
                                 name: 'Explore Chapter',
@@ -2150,7 +2413,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.log("Unknown SLV2-popup-blue-btn click");
                     }
                 })
-                
+
 
             ]
         };
@@ -2163,7 +2426,7 @@ document.addEventListener("DOMContentLoaded", function () {
         SalesforceInteractions.initSitemap({
             global,
             pageTypeDefault,
-            pageTypes: [ReportPage,ViewReportPage,RegistrationSuccessful123, homepage, StudentPage, Subscription, PaymentCapture, DoubtsPage,selflearn]
+            pageTypes: [ReportPage, ViewReportPage, RegistrationSuccessful123, homepage, StudentPage, Subscription, DoubtsPage, selflearn]
         })
 
     });
