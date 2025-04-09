@@ -2402,6 +2402,63 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
 
+        if (!window.__tabTrackerAttached) {
+            window.__tabTrackerAttached = true;
+        
+            let lastBlurTime = null;
+            let focusEventCount = 0;
+        
+            window.addEventListener("blur", () => {
+                lastBlurTime = new Date();
+                console.log("Tab abandoned at:", lastBlurTime.toISOString());
+        
+                if (window.SalesforceInteractions) {
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: 'Tab Abandoned',
+                            eventType: 'CustomEvent',
+                            attributes: {
+                                state: 'abandoned',
+                                timestamp: lastBlurTime.toISOString(),
+                                path: window.location.pathname
+                            }
+                        }
+                    });
+                }
+            });
+        
+            window.addEventListener("focus", () => {
+                const now = new Date();
+                const timeAway = lastBlurTime ? Math.round((now - lastBlurTime) / 1000) : 0;
+        
+                if (focusEventCount < 10) {
+                    console.log("Tab focused at:", now.toISOString(), `| Time away: ${timeAway}s`);
+        
+                    if (window.SalesforceInteractions) {
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: 'Tab Focused',
+                                eventType: 'CustomEvent',
+                                attributes: {
+                                    state: 'focused',
+                                    timestamp: now.toISOString(),
+                                    path: window.location.pathname,
+                                    timeAwayInSeconds: timeAway
+                                }
+                            }
+                        });
+                    }
+        
+                    focusEventCount++;
+                } else {
+                    console.log("Max tab focus events reached.");
+                }
+        
+                lastBlurTime = null;
+            });
+        }
+        
+        
         const pageTypeDefault = {
             name: 'default'
         }
