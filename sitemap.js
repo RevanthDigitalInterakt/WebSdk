@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }).then(() => {
         // set the log level during sitemap development to see potential problems
-        console.log('Salesforce Interactions WEB SDK isss ready');
+        console.log('Salesforce Interactions WEB SDK is is ready');
         SalesforceInteractions.setLoggingLevel('DEBUG');
 
 
@@ -278,81 +278,83 @@ document.addEventListener("DOMContentLoaded", function () {
 
         observer.observe(document.body, { childList: true, subtree: true });
 
-        function handlePaymentClick(event) {
-            const clickedBox = event.currentTarget;
-            const blueBox = clickedBox.closest('.subscrp-blue-brdbox');
-            const methodTitle = blueBox?.querySelector('.subscrp-blue-hdng');
-            const methodName = methodTitle?.innerText.trim() || '';
+    //     function handlePaymentClick(event) {
+    //         const clickedBox = event.currentTarget;
+    //         const blueBox = clickedBox.closest('.subscrp-blue-brdbox');
+    //         const methodTitle = blueBox?.querySelector('.subscrp-blue-hdng');
+    //         const methodName = methodTitle?.innerText.trim() || '';
         
-            console.log('Payment Method:', methodName);
+    //         console.log('Payment Method:', methodName);
         
-            // Extract prices
-            const items = document.querySelectorAll('.SUBCRP-cart-review-list li');
+    //         // Extract prices
+    //         const items = document.querySelectorAll('.SUBCRP-cart-review-list li');
         
-            let subtotalElement1, discountElement1, grandTotalElement1;
+    //         let subtotalElement1, discountElement1, grandTotalElement1;
         
-            items.forEach((item) => {
-                const label = item.querySelector('span')?.innerText?.trim();
+    //         items.forEach((item) => {
+    //             const label = item.querySelector('span')?.innerText?.trim();
         
-                if (label === 'Subtotal') {
-                    subtotalElement1 = item.querySelector('.review-bold-text');
-                } else if (label?.includes('Discount')) {
-                    discountElement1 = item.querySelector('.review-bold-text');
-                } else if (label === 'Grand Total') {
-                    grandTotalElement1 = item.querySelector('div.review-bold-text, div.review-blue-txt.review-bold-text');
-                }
-            });
+    //             if (label === 'Subtotal') {
+    //                 subtotalElement1 = item.querySelector('.review-bold-text');
+    //             } else if (label?.includes('Discount')) {
+    //                 discountElement1 = item.querySelector('.review-bold-text');
+    //             } else if (label === 'Grand Total') {
+    //                 grandTotalElement1 = item.querySelector('div.review-bold-text, div.review-blue-txt.review-bold-text');
+    //             }
+    //         });
         
-            const subtotal = subtotalElement1?.innerText.replace(/[^\d.]/g, '') || "0";
-            const discount = discountElement1?.innerText.replace(/[^\d.]/g, '') || "0";
-            const grandTotal = grandTotalElement1?.innerText.replace(/[^\d.]/g, '') || "0";
+    //         const subtotal = subtotalElement1?.innerText.replace(/[^\d.]/g, '') || "0";
+    //         const discount = discountElement1?.innerText.replace(/[^\d.]/g, '') || "0";
+    //         const grandTotal = grandTotalElement1?.innerText.replace(/[^\d.]/g, '') || "0";
         
-            console.log('Subtotal:', subtotal);
-            console.log('Discount:', discount);
-            console.log('Grand Total:', grandTotal);
+    //         console.log('Subtotal:', subtotal);
+    //         console.log('Discount:', discount);
+    //         console.log('Grand Total:', grandTotal);
         
-            SalesforceInteractions.sendEvent({
-                interaction: {
-                    name: "Payment Method",
-                    eventType: "payment",
-                    attributes: {
-                        PaymentMethod: methodName,
-                        SubTotal: parseFloat(subtotal),
-                        Discount: parseFloat(discount),
-                        GrandTotal: parseFloat(grandTotal)
-                    }
-                }
-            });
-        }
+    //         SalesforceInteractions.sendEvent({
+    //             interaction: {
+    //                 name: "Payment Method",
+    //                 eventType: "payment",
+    //                 attributes: {
+    //                     PaymentMethod: methodName,
+    //                     SubTotal: parseFloat(subtotal),
+    //                     Discount: parseFloat(discount),
+    //                     GrandTotal: parseFloat(grandTotal)
+    //                 }
+    //             }
+    //         });
+    //     }
         
-        // Set up the observer
-        const observerpm = new MutationObserver((mutationsList) => {
-            if (window.location.href === "https://student.devinfinitylearn.in/subscription/mycart") {
-                const emiButtons = document.querySelectorAll('.subscrp-emi-bank-name-box');
-                const emimethods = document.querySelectorAll(".subscrp-blue-brdbox-hdr");
+    //     // Set up the observer
+    //     const observerpm = new MutationObserver((mutationsList) => {
+    //         if (window.location.href === "https://student.devinfinitylearn.in/subscription/mycart") {
+    //             const emiButtons = document.querySelectorAll('.subscrp-emi-bank-name-box');
+    //             const emimethods = document.querySelectorAll(".subscrp-blue-brdbox-hdr");
         
-                const headerTexts = Array.from(emimethods).map((method) => method.innerText.trim());
+    //             const headerTexts = Array.from(emimethods).map((method) => method.innerText.trim());
         
-                const isValidMethod = headerTexts.some(text =>
-                    ["Cardless EMI", "No Cost EMI", "Debit Card EMI", "Credit Card EMI"].includes(text)
-                );
+    //             const isValidMethod = headerTexts.some(text =>
+    //                 ["Cardless EMI", "No Cost EMI", "Debit Card EMI", "Credit Card EMI"].includes(text)
+    //             );
         
-                if (isValidMethod) {
-                    emiButtons.forEach((btn) => {
-                        if (!btn.hasAttribute('data-listener-attached')) {
-                            btn.addEventListener('click', handlePaymentClick);
-                            btn.setAttribute('data-listener-attached', 'true');
-                            console.log("Event listener attached to EMI button");
-                        }
-                    });
-                }
-            }
-        });
+    //             if (isValidMethod) {
+    //                 emiButtons.forEach((btn) => {
+                       
+    //                     console.log("Event listener attached to EMI button");
+    //                     btn.addEventListener('click', handlePaymentClick);
+                            
+    //                 });
+    //             }
+
+    //             // paymentButton.addEventListener("click", () => {
+    //             //     selectedpm();
+    //             // });
+    //         }
+    //     });
         
-        // Wait for DOM ready before observing
-        document.addEventListener('DOMContentLoaded', () => {
-            observerpm.observe(document.body, { childList: true, subtree: true });
-        });
+       
+    //   observerpm.observe(document.body, { childList: true, subtree: true });
+    
         
 
       
@@ -642,10 +644,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: 'Infinity Logo Click',
+                            name: 'Infinity Logo',
                             eventType: 'icon',
-                            attributes: {
-                            }
                         }
                     });
                 }),
@@ -986,7 +986,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: "Contact Us Button",
-                            eventType: "CustomEvent",
+                            eventType: "contact",
                             attributes: {
                                 interactionName: "Contact Us Button Clicked",
                                 firstName: firstName,
@@ -1368,7 +1368,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Send event to Salesforce with additional information
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Phone Icon Clicked",
+                            name: "Phone Icon",
                             eventType: 'icon',
                             attributes: {
                                 ContactedChannel: "Phone"
@@ -1384,7 +1384,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Send event to Salesforce with additional information
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Phone Icon Clicked",  //icon click
+                            name: "Phone Icon Clicked",
                             eventType: 'icon',
                             attributes: {
                                 ContactedChannel: "Phone"
@@ -1399,7 +1399,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Send event to Salesforce with additional information
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "whatsapp Icon Clicked",  //icon click
+                            name: "whatsapp Icon",
                             eventType: 'icon',
                             attributes: {
                                 ContactedChannel: "WhatsApp"
