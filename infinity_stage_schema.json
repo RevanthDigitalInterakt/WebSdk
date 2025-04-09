@@ -1390,7 +1390,7 @@
           "isCurrencyIsoCode": false
         }
       ],
-      "fieldCount": 8,
+      "fieldCount": 9,
       "availabilityStatusLabel": {
         "label": "In Use",
         "rawValue": "INUSE"
