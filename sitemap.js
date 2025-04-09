@@ -1384,7 +1384,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: "Phone Icon Clicked",  //icon click
-                            eventType: 'CustomEvent',
+                            eventType: 'icon',
                             attributes: {
                                 ContactedChannel: "Phone"
                             }
@@ -1399,7 +1399,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: "whatsapp Icon Clicked",  //icon click
-                            eventType: 'CustomEvent',
+                            eventType: 'icon',
                             attributes: {
                                 ContactedChannel: "WhatsApp"
                             }
