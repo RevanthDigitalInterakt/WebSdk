@@ -2405,59 +2405,78 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!window.__tabTrackerAttached) {
             window.__tabTrackerAttached = true;
         
-            let lastBlurTime = null;
+            const pageLoadTime = new Date();
+            let lastHiddenTime = null;
             let focusEventCount = 0;
+            let hasUserInteracted = document.visibilityState === 'visible';
         
-            window.addEventListener("blur", () => {
-                lastBlurTime = new Date();
-                console.log("Tab abandoned at:", lastBlurTime.toISOString());
+            function convertUTCToIST(utcStr) {
+                const utcDate = new Date(utcStr);
+                return utcDate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+            }
         
-                if (window.SalesforceInteractions) {
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: 'Tab Abandoned',
-                            eventType: 'CustomEvent',
-                            attributes: {
-                                state: 'abandoned',
-                                timestamp: lastBlurTime.toISOString(),
-                                path: window.location.pathname
-                            }
-                        }
-                    });
-                }
-            });
-        
-            window.addEventListener("focus", () => {
+            document.addEventListener('visibilitychange', function () {
                 const now = new Date();
-                const timeAway = lastBlurTime ? Math.round((now - lastBlurTime) / 1000) : 0;
+                const utcTime = now.toISOString();
+                const istTime = convertUTCToIST(utcTime);
+                const timeSinceLoad = now - pageLoadTime;
         
-                if (focusEventCount < 10) {
-                    console.log("Tab focused at:", now.toISOString(), `| Time away: ${timeAway}s`);
+                if (document.visibilityState === 'hidden') {
+                    if (!hasUserInteracted || timeSinceLoad < 1000) {
+                        console.log("Ignored hidden event: too early or no interaction.");
+                        return;
+                    }
+        
+                    lastHiddenTime = now;
+                    console.log('User has switched to another tab (UTC):', utcTime);
+                    console.log('User has switched to another tab (IST):', istTime);
         
                     if (window.SalesforceInteractions) {
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: 'Tab Focused',
+                                name: 'Tab Abandoned',
                                 eventType: 'CustomEvent',
                                 attributes: {
-                                    state: 'focused',
-                                    timestamp: now.toISOString(),
-                                    path: window.location.pathname,
-                                    timeAwayInSeconds: timeAway
+                                    state: 'abandoned',
+                                    timestamp: utcTime,
+                                    path: window.location.pathname
                                 }
                             }
                         });
                     }
+                } else if (document.visibilityState === 'visible') {
+                    hasUserInteracted = true;
+                    const timeAway = lastHiddenTime ? Math.round((now - lastHiddenTime) / 1000) : 0;
         
-                    focusEventCount++;
-                } else {
-                    console.log("Max tab focus events reached.");
+                    if (focusEventCount < 10) {
+                        console.log('User is back on the tab (UTC):', utcTime, `| Time away: ${timeAway}s`);
+                        console.log('User is back on the tab (IST):', istTime);
+        
+                        if (window.SalesforceInteractions) {
+                            SalesforceInteractions.sendEvent({
+                                interaction: {
+                                    name: 'Tab Focused',
+                                    eventType: 'CustomEvent',
+                                    attributes: {
+                                        state: 'focused',
+                                        timestamp: utcTime,
+                                        path: window.location.pathname,
+                                        timeAwayInSeconds: timeAway
+                                    }
+                                }
+                            });
+                        }
+        
+                        focusEventCount++;
+                    }
+        
+                    lastHiddenTime = null;
                 }
-        
-                lastBlurTime = null;
             });
         }
         
+        
+            
         
         const pageTypeDefault = {
             name: 'default'
