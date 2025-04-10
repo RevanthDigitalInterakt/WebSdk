@@ -2653,7 +2653,6 @@
       },
       "streamingAppLabel": "Infinity_Stage_Website"
     },
-
     {
       "developerName": "tabTracker",
       "masterLabel": "Tab Tracker",
@@ -2661,23 +2660,9 @@
       "availabilityStatus": "INUSE",
       "externalDataTranFields": [
         {
-          "masterLabel": "category",
+          "masterLabel": "Tab State",
           "dataType": "Text",
-          "developerName": "category",
-          "isDataRequired": true,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "dateTime",
-          "dataType": "DateTime",
-          "developerName": "dateTime",
-          "isDataRequired": true,
-          "isCurrencyIsoCode": false
-        },
-        {
-          "masterLabel": "Timestamp",
-          "dataType": "DateTime",
-          "developerName": "attributesTimeStamp",
+          "developerName": "attributesTabstate",
           "isDataRequired": false,
           "isCurrencyIsoCode": false
         },
@@ -2688,10 +2673,32 @@
           "isDataRequired": false,
           "isCurrencyIsoCode": false
         },
+
         {
-          "masterLabel": "deviceId",
+          "masterLabel": "TimeAway Number",
+          "dataType": "Number",
+          "developerName": "attributesTimeAway1",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "Timestamp",
+          "dataType": "DateTime",
+          "developerName": "attributesTimeStamp",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "Url Path",
           "dataType": "Text",
-          "developerName": "deviceId",
+          "developerName": "attributesUrl",
+          "isDataRequired": false,
+          "isCurrencyIsoCode": false
+        },
+        {
+          "masterLabel": "category",
+          "dataType": "Text",
+          "developerName": "category",
           "isDataRequired": true,
           "isCurrencyIsoCode": false
         },
@@ -2703,24 +2710,25 @@
           "isCurrencyIsoCode": false
         },
         {
-          "masterLabel": "eventType",
+          "masterLabel": "deviceId",
           "dataType": "Text",
-          "developerName": "eventType",
+          "developerName": "deviceId",
           "isDataRequired": true,
           "isCurrencyIsoCode": false
         },
         {
-          "masterLabel": "Url Path",
+          "masterLabel": "eventId",
           "dataType": "Text",
-          "developerName": "attributesUrl",
-          "isDataRequired": false,
+          "developerName": "eventId",
+          "isDataRequired": true,
+          "primaryIndexOrder": 1,
           "isCurrencyIsoCode": false
         },
         {
-          "masterLabel": "Tab State",
+          "masterLabel": "eventType",
           "dataType": "Text",
-          "developerName": "attributesTabstate",
-          "isDataRequired": false,
+          "developerName": "eventType",
+          "isDataRequired": true,
           "isCurrencyIsoCode": false
         },
         {
@@ -2731,11 +2739,10 @@
           "isCurrencyIsoCode": false
         },
         {
-          "masterLabel": "eventId",
-          "dataType": "Text",
-          "developerName": "eventId",
+          "masterLabel": "dateTime",
+          "dataType": "DateTime",
+          "developerName": "dateTime",
           "isDataRequired": true,
-          "primaryIndexOrder": 1,
           "isCurrencyIsoCode": false
         }
       ],
