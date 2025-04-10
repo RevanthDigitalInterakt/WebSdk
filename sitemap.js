@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }).then(() => {
         // set the log level during sitemap development to see potential problems
-        console.log('Salesforce Interactions WEB SDK iss aas ready');
+        console.log('Salesforce Interactions WEB SDK is ready');
         SalesforceInteractions.setLoggingLevel('DEBUG');
 
 
@@ -278,6 +278,93 @@ document.addEventListener("DOMContentLoaded", function () {
 
         observer.observe(document.body, { childList: true, subtree: true });
 
+        // function handlePaymentClick(event) {
+        //     const clickedBox = event.currentTarget;
+        //     const blueBox = clickedBox.closest('.subscrp-blue-brdbox');
+        //     const methodTitle = blueBox?.querySelector('.subscrp-blue-hdng');
+        //     const methodName = methodTitle?.innerText.trim() || '';
+        
+        //     console.log('Payment Method:', methodName);
+        
+        //     // Extract prices
+        //     const items = document.querySelectorAll('.SUBCRP-cart-review-list li');
+        
+        //     let subtotalElement1, discountElement1, grandTotalElement1;
+        
+        //     items.forEach((item) => {
+        //         const label = item.querySelector('span')?.innerText?.trim();
+        
+        //         if (label === 'Subtotal') {
+        //             subtotalElement1 = item.querySelector('.review-bold-text');
+        //         } else if (label?.includes('Discount')) {
+        //             discountElement1 = item.querySelector('.review-bold-text');
+        //         } else if (label === 'Grand Total') {
+        //             grandTotalElement1 = item.querySelector('div.review-bold-text, div.review-blue-txt.review-bold-text');
+        //         }
+        //     });
+        
+        //     const subtotal = subtotalElement1?.innerText.replace(/[^\d.]/g, '') || "0";
+        //     const discount = discountElement1?.innerText.replace(/[^\d.]/g, '') || "0";
+        //     const grandTotal = grandTotalElement1?.innerText.replace(/[^\d.]/g, '') || "0";
+        
+        //     console.log('Subtotal:', subtotal);
+        //     console.log('Discount:', discount);
+        //     console.log('Grand Total:', grandTotal);
+        
+        //     SalesforceInteractions.sendEvent({
+        //         interaction: {
+        //             name: "Payment Method",
+        //             eventType: "payment",
+        //             attributes: {
+        //                 PaymentMethod: methodName,
+        //                 SubTotal: parseFloat(subtotal),
+        //                 Discount: parseFloat(discount),
+        //                 GrandTotal: parseFloat(grandTotal)
+        //             }
+        //         }
+        //     });
+        // }
+        
+        // // Set up the observer
+        // const observerpm = new MutationObserver((mutationsList) => {
+        //     if (window.location.href === "https://student.devinfinitylearn.in/subscription/mycart") {
+        //         const emiButtons = document.querySelectorAll('.subscrp-emi-bank-name-box');
+        //         const emimethods = document.querySelectorAll(".subscrp-blue-brdbox-hdr");
+        
+        //         const headerTexts = Array.from(emimethods).map((method) => method.innerText.trim());
+        
+        //         const isValidMethod = headerTexts.some(text =>
+        //             ["Cardless EMI", "No Cost EMI", "Debit Card EMI", "Credit Card EMI"].includes(text)
+        //         );
+        
+        //         if (isValidMethod) {
+        //             emiButtons.forEach((btn) => {
+        //                 if (!btn.hasAttribute('data-listener-attached')) {
+        //                     btn.addEventListener('click', handlePaymentClick);
+        //                     btn.setAttribute('data-listener-attached', 'true');
+        //                     console.log("Event listener attached to EMI button");
+        //                 }
+        //             });
+        //         }
+        //     }
+        // });
+        
+        // // Wait for DOM ready before observing
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     observerpm.observe(document.body, { childList: true, subtree: true });
+        // });
+        
+
+      
+
+
+        // observerpm.observe(document.body, {
+        //     childList: true,
+        //     subtree: true
+        // });
+
+
+
         function handlePaymentClick(event) {
             const clickedBox = event.currentTarget;
             const blueBox = clickedBox.closest('.subscrp-blue-brdbox');
@@ -349,22 +436,11 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
         
-        // Wait for DOM ready before observing
-        document.addEventListener('DOMContentLoaded', () => {
-            observerpm.observe(document.body, { childList: true, subtree: true });
-        });
+        // Start observing immediately
+        observerpm.observe(document.body, { childList: true, subtree: true });
         
-
-      
-
-
-        observerpm.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-
-
-
+        
+        
         function firstpage() {
 
 
@@ -2402,6 +2478,179 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
 
+        //tab trcaker
+
+        // if (!window.__tabTrackerAttached) {
+        //     window.__tabTrackerAttached = true;
+        
+        //     const pageLoadTime = new Date();
+        //     let lastBlurTime = null;
+        //     let focusEventCount = 0;
+        //     let blurTimeout = null;
+        //     let lastKnownState = document.hasFocus() ? 'focused' : 'blurred';
+        //     let hasUserFocused = document.hasFocus();
+        
+        //     function convertUTCToIST(utcStr) {
+        //         const utcDate = new Date(utcStr);
+        //         const istOffset = 5.5 * 60 * 60 * 1000;
+        //         const istDate = new Date(utcDate.getTime() + istOffset);
+        //         return istDate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+        //     }
+        
+        //     window.addEventListener("blur", () => {
+        //         const now = new Date();
+        //         const timeSinceLoad = now - pageLoadTime;
+        
+        //         if (!hasUserFocused || timeSinceLoad < 1000) {
+        //             console.log("Ignored blur: tab not focused yet or blur too early.");
+        //             return;
+        //         }
+        
+        //         blurTimeout = setTimeout(() => {
+        //             const utcTime = now.toISOString();
+        //             const istTime = convertUTCToIST(utcTime);
+        
+        //             lastBlurTime = now;
+        //             lastKnownState = 'blurred';
+        
+        //             console.log("Tab abandoned at (UTC):", utcTime);
+        //             console.log("Tab abandoned at (IST):", istTime);
+        
+        //             if (window.SalesforceInteractions) {
+        //                 SalesforceInteractions.sendEvent({
+        //                     interaction: {
+        //                         name: 'Tab Abandoned',
+        //                         eventType: 'CustomEvent',
+        //                         attributes: {
+        //                             state: 'abandoned',
+        //                             timestamp: utcTime,
+        //                             path: window.location.pathname
+        //                         }
+        //                     }
+        //                 });
+        //             }
+        //         }, 200);
+        //     });
+        
+        //     window.addEventListener("focus", () => {
+        //         hasUserFocused = true;
+        
+        //         if (blurTimeout) {
+        //             clearTimeout(blurTimeout);
+        //             blurTimeout = null;
+        //         }
+        
+        //         const now = new Date();
+        //         const utcTime = now.toISOString();
+        //         const istTime = convertUTCToIST(utcTime);
+        //         const timeAway = lastBlurTime ? Math.round((now - lastBlurTime) / 1000) : 0;
+        
+        //         if (lastKnownState !== 'focused' && focusEventCount < 10) {
+        //             console.log("Tab focused at (UTC):", utcTime, `| Time away: ${timeAway}s`);
+        //             console.log("Tab focused at (IST):", istTime);
+        
+        //             if (window.SalesforceInteractions) {
+        //                 SalesforceInteractions.sendEvent({
+        //                     interaction: {
+        //                         name: 'Tab Focused',
+        //                         eventType: 'CustomEvent',
+        //                         attributes: {
+        //                             state: 'focused',
+        //                             timestamp: utcTime,
+        //                             path: window.location.pathname,
+        //                             timeAwayInSeconds: timeAway
+        //                         }
+        //                     }
+        //                 });
+        //             }
+        
+        //             focusEventCount++;
+        //             lastKnownState = 'focused';
+        //         }
+        
+        //         lastBlurTime = null;
+        //     });
+        // }
+        
+        //working tab activity
+
+        // if (!window.__tabTrackerAttached) {
+        //     window.__tabTrackerAttached = true;
+        
+        //     const pageLoadTime = new Date();
+        //     let lastHiddenTime = null;
+        //     let focusEventCount = 0;
+        //     let hasUserInteracted = document.visibilityState === 'visible';
+        
+        //     function convertUTCToIST(utcStr) {
+        //         const utcDate = new Date(utcStr);
+        //         const istOffset = 5.5 * 60 * 60 * 1000;
+        //         const istDate = new Date(utcDate.getTime() + istOffset);
+        //         return istDate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+        //     }
+        
+        //     document.addEventListener('visibilitychange', function () {
+        //         const now = new Date();
+        //         const utcTime = now.toISOString();
+        //         const istTime = convertUTCToIST(utcTime);
+        //         const timeSinceLoad = now - pageLoadTime;
+        
+        //         if (document.visibilityState === 'hidden') {
+        //             if (!hasUserInteracted || timeSinceLoad < 1000) {
+        //                 console.log("Ignored hidden event: too early or no interaction.");
+        //                 return;
+        //             }
+        
+        //             lastHiddenTime = now;
+        //             console.log('User has switched to another tab (UTC):', utcTime);
+        //             console.log('User has switched to another tab (IST):', istTime);
+        
+        //             if (window.SalesforceInteractions) {
+        //                 SalesforceInteractions.sendEvent({
+        //                     interaction: {
+        //                         name: 'Tab Abandoned',
+        //                         eventType: 'CustomEvent',
+        //                         attributes: {
+        //                             state: 'abandoned',
+        //                             timestamp: utcTime,
+        //                             path: window.location.pathname
+        //                         }
+        //                     }
+        //                 });
+        //             }
+        //         } else if (document.visibilityState === 'visible') {
+        //             hasUserInteracted = true;
+        //             const timeAway = lastHiddenTime ? Math.round((now - lastHiddenTime) / 1000) : 0;
+        
+        //             if (focusEventCount < 10) {
+        //                 console.log('User is back on the tab (UTC):', utcTime, `| Time away: ${timeAway}s`);
+        //                 console.log('User is back on the tab (IST):', istTime);
+        
+        //                 if (window.SalesforceInteractions) {
+        //                     SalesforceInteractions.sendEvent({
+        //                         interaction: {
+        //                             name: 'Tab Focused',
+        //                             eventType: 'CustomEvent',
+        //                             attributes: {
+        //                                 state: 'focused',
+        //                                 timestamp: utcTime,
+        //                                 path: window.location.pathname,
+        //                                 timeAwayInSeconds: timeAway
+        //                             }
+        //                         }
+        //                     });
+        //                 }
+        
+        //                 focusEventCount++;
+        //             }
+        
+        //             lastHiddenTime = null;
+        //         }
+        //     });
+        // }
+        
+
+
         if (!window.__tabTrackerAttached) {
             window.__tabTrackerAttached = true;
         
@@ -2435,11 +2684,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         SalesforceInteractions.sendEvent({
                             interaction: {
                                 name: 'Tab Abandoned',
-                                eventType: 'CustomEvent',
+                                eventType: 'tabTracker',
                                 attributes: {
-                                    state: 'abandoned',
-                                    timestamp: utcTime,
-                                    path: window.location.pathname
+                                    Tabstate: 'abandoned',
+                                    TimeStamp: utcTime,
+                                    Url: window.location.pathname
                                 }
                             }
                         });
@@ -2456,12 +2705,12 @@ document.addEventListener("DOMContentLoaded", function () {
                             SalesforceInteractions.sendEvent({
                                 interaction: {
                                     name: 'Tab Focused',
-                                    eventType: 'CustomEvent',
+                                    eventType: 'tabTracker',
                                     attributes: {
-                                        state: 'focused',
-                                        timestamp: utcTime,
-                                        path: window.location.pathname,
-                                        timeAwayInSeconds: timeAway
+                                        Tabstate: 'focused',
+                                        TimeStamp: utcTime,
+                                        Url: window.location.pathname,
+                                        TimeAway1: timeAway
                                     }
                                 }
                             });
