@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.log("done test report");
                 }
 
-                
+
 
                 if (!hasExecuted && (window.location.href.includes('/payementVerification'))) {
 
@@ -62,77 +62,77 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }, 1000);
 
-        function executeIdPaymentStatus(){
+        function executeIdPaymentStatus() {
 
             const successElement = document.querySelector(".section-heading");
 
-                    function generateUniqueId() {
-                        return `id_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
-                    }
+            function generateUniqueId() {
+                return `id_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
+            }
 
-                    // Payment Success Logic
-                    if (successElement && successElement.innerText.includes("Congratulation")) {
-                        const name = successElement.innerText.replace("Congratulation, ", "").replace("!", "").trim();
+            // Payment Success Logic
+            if (successElement && successElement.innerText.includes("Congratulation")) {
+                const name = successElement.innerText.replace("Congratulation, ", "").replace("!", "").trim();
 
-                        const text = document.querySelector(".section-subheading.sm")?.innerText || "";
+                const text = document.querySelector(".section-subheading.sm")?.innerText || "";
 
-                        const container = document.querySelector('.center-heading-area');
+                const container = document.querySelector('.center-heading-area');
 
-                        let capturedAmount = "0.00";
+                let capturedAmount = "0.00";
 
-                        if (container) {
-                            const text1 = container.innerText;
-                            console.log("Full Text:", text);
+                if (container) {
+                    const text1 = container.innerText;
+                    console.log("Full Text:", text);
 
-                            // Match amount like 38,415.02 (with or without ₹ symbol)
-                            const amountMatch = text1.match(/(?:₹\s*)?([\d,]+\.\d{1,2})/);
-                            capturedAmount = amountMatch ? amountMatch[1].replace(/,/g, '') : "0.00";
+                    // Match amount like 38,415.02 (with or without ₹ symbol)
+                    const amountMatch = text1.match(/(?:₹\s*)?([\d,]+\.\d{1,2})/);
+                    capturedAmount = amountMatch ? amountMatch[1].replace(/,/g, '') : "0.00";
 
-                            console.log("Captured Amount:", capturedAmount);  // Output: 38415.02
+                    console.log("Captured Amount:", capturedAmount);  // Output: 38415.02
+                }
+
+
+                SalesforceInteractions.sendEvent({
+                    interaction: {
+                        name: "Payment status",
+                        eventType: "payment",
+                        attributes: {
+                            PaymentStatus: "Congratulations"
                         }
-
-
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: "Payment status",
-                                eventType: "payment",
-                                attributes: {
-                                    PaymentStatus: "Congratulations"
-                                }
-                            }
-                        });
                     }
+                });
+            }
 
-                    const failureElement = document.querySelector('.SUBCRP-pymnt-fail-error-msg');
+            const failureElement = document.querySelector('.SUBCRP-pymnt-fail-error-msg');
 
-                    // Payment Failure Logic
-                    if (failureElement && failureElement.innerText.toLowerCase().includes('failed')) {
-                        const failureText = failureElement.innerText;
+            // Payment Failure Logic
+            if (failureElement && failureElement.innerText.toLowerCase().includes('failed')) {
+                const failureText = failureElement.innerText;
 
-                        const container = document.querySelector('.center-heading-area');
-                        const text = container?.innerText || "";
+                const container = document.querySelector('.center-heading-area');
+                const text = container?.innerText || "";
 
-                        // Regex to capture amount with or without ₹ symbol
-                        const amountMatch = text.match(/(?:₹\s*)?([\d,]+\.\d+)/);
+                // Regex to capture amount with or without ₹ symbol
+                const amountMatch = text.match(/(?:₹\s*)?([\d,]+\.\d+)/);
 
-                        // Extract amount and remove commas
-                        const capturedAmount = amountMatch ? amountMatch[1].replace(/,/g, '') : "0.00";
+                // Extract amount and remove commas
+                const capturedAmount = amountMatch ? amountMatch[1].replace(/,/g, '') : "0.00";
 
-                        // Just log it nicely
-                        console.log(`Captured Amount: Rs. ${capturedAmount}`);
+                // Just log it nicely
+                console.log(`Captured Amount: Rs. ${capturedAmount}`);
 
-                        // PaymentCapture.handlePaymentCaptured("Failed", failedAmount);
+                // PaymentCapture.handlePaymentCaptured("Failed", failedAmount);
 
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: "Payment status captured",
-                                eventType: "payment",
-                                attributes: {
-                                    PaymentStatus: "Failed"
-                                }
-                            }
-                        });
+                SalesforceInteractions.sendEvent({
+                    interaction: {
+                        name: "Payment status",
+                        eventType: "payment",
+                        attributes: {
+                            PaymentStatus: "Failed"
+                        }
                     }
+                });
+            }
 
         }
 
@@ -169,11 +169,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: 'Student Report',
-                            eventType: 'CustomEvent',
+                            eventType: 'test',
                             attributes: {
                                 Score: score,
                                 TimeTaken: ttt,
-                                StudentExamName: stuexamName,   //change here
+                                ExamName: stuexamName,   //change here
                                 Accuracy: accuracy,
                                 AvgTimePerQuestion: avgtime,
                             },
@@ -278,22 +278,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
         observer.observe(document.body, { childList: true, subtree: true });
 
+
+
         // function handlePaymentClick(event) {
-        //     const clickedBox = event.currentTarget;
-        //     const blueBox = clickedBox.closest('.subscrp-blue-brdbox');
-        //     const methodTitle = blueBox?.querySelector('.subscrp-blue-hdng');
+        //     const clickedBox = event.currentTarget.closest('.subscrp-blue-brdbox');
+        //     const methodTitle = clickedBox?.querySelector('.subscrp-emi-bank-name-box');
         //     const methodName = methodTitle?.innerText.trim() || '';
-        
+
         //     console.log('Payment Method:', methodName);
-        
+
         //     // Extract prices
         //     const items = document.querySelectorAll('.SUBCRP-cart-review-list li');
-        
+
         //     let subtotalElement1, discountElement1, grandTotalElement1;
-        
+
         //     items.forEach((item) => {
         //         const label = item.querySelector('span')?.innerText?.trim();
-        
+
         //         if (label === 'Subtotal') {
         //             subtotalElement1 = item.querySelector('.review-bold-text');
         //         } else if (label?.includes('Discount')) {
@@ -302,15 +303,15 @@ document.addEventListener("DOMContentLoaded", function () {
         //             grandTotalElement1 = item.querySelector('div.review-bold-text, div.review-blue-txt.review-bold-text');
         //         }
         //     });
-        
+
         //     const subtotal = subtotalElement1?.innerText.replace(/[^\d.]/g, '') || "0";
         //     const discount = discountElement1?.innerText.replace(/[^\d.]/g, '') || "0";
         //     const grandTotal = grandTotalElement1?.innerText.replace(/[^\d.]/g, '') || "0";
-        
+
         //     console.log('Subtotal:', subtotal);
         //     console.log('Discount:', discount);
         //     console.log('Grand Total:', grandTotal);
-        
+
         //     SalesforceInteractions.sendEvent({
         //         interaction: {
         //             name: "Payment Method",
@@ -324,20 +325,20 @@ document.addEventListener("DOMContentLoaded", function () {
         //         }
         //     });
         // }
-        
+
         // // Set up the observer
         // const observerpm = new MutationObserver((mutationsList) => {
         //     if (window.location.href === "https://student.devinfinitylearn.in/subscription/mycart") {
-        //         const emiButtons = document.querySelectorAll('.subscrp-emi-bank-name-box');
         //         const emimethods = document.querySelectorAll(".subscrp-blue-brdbox-hdr");
-        
+        //         const emiButtons = document.querySelectorAll('.subscrp-emi-bank-name-box');
+
         //         const headerTexts = Array.from(emimethods).map((method) => method.innerText.trim());
-        
+
         //         const isValidMethod = headerTexts.some(text =>
         //             ["Cardless EMI", "No Cost EMI", "Debit Card EMI", "Credit Card EMI"].includes(text)
         //         );
-        
-        //         if (isValidMethod) {
+
+        //         if (isValidMethod && emiButtons.length > 0) {
         //             emiButtons.forEach((btn) => {
         //                 if (!btn.hasAttribute('data-listener-attached')) {
         //                     btn.addEventListener('click', handlePaymentClick);
@@ -348,56 +349,53 @@ document.addEventListener("DOMContentLoaded", function () {
         //         }
         //     }
         // });
-        
-        // // Wait for DOM ready before observing
-        // document.addEventListener('DOMContentLoaded', () => {
-        //     observerpm.observe(document.body, { childList: true, subtree: true });
-        // });
-        
-
-      
 
 
-        // observerpm.observe(document.body, {
-        //     childList: true,
-        //     subtree: true
-        // });
+        // // Start observing immediately
+        // observerpm.observe(document.body, { childList: true, subtree: true });
 
 
 
         function handlePaymentClick(event) {
-            const clickedBox = event.currentTarget;
-            const blueBox = clickedBox.closest('.subscrp-blue-brdbox');
-            const methodTitle = blueBox?.querySelector('.subscrp-blue-hdng');
-            const methodName = methodTitle?.innerText.trim() || '';
-        
-            console.log('Payment Method:', methodName);
-        
-            // Extract prices
-            const items = document.querySelectorAll('.SUBCRP-cart-review-list li');
-        
-            let subtotalElement1, discountElement1, grandTotalElement1;
-        
-            items.forEach((item) => {
-                const label = item.querySelector('span')?.innerText?.trim();
-        
+            const methodName = event.currentTarget.innerText.trim();
+            console.log("Payment Method:", methodName);
+
+            // const items = document.querySelectorAll('.SUBCRP-cart-review-list li');
+            // let subtotal = "0", discount = "0", grandTotal = "0";
+
+            // items.forEach(item => {
+            //   const label = item.querySelector('span')?.innerText?.trim();
+            //   const value = item.querySelector('.review-bold-text, .review-blue-txt.review-bold-text')?.innerText?.replace(/[^\d.]/g, '');
+
+            //   if (label === 'Subtotal') subtotal = value || subtotal;
+            //   else if (label?.includes('Discount')) discount = value || discount;
+            //   else if (label === 'Grand Total') grandTotal = value || grandTotal;
+            // });
+
+            // console.log('Subtotal:', subtotal);
+            // console.log('Discount:', discount);
+            // console.log('Grand Total:', grandTotal);
+
+            let subtotal = "0", discount = "0", grandTotal = "0";
+
+            document.querySelectorAll('.SUBCRP-cart-review-list li').forEach((item) => {
+                let label = item.querySelector('span')?.innerText?.trim();
+                let valueElement = item.querySelector('div'); // Select the direct <div> containing the value
+
                 if (label === 'Subtotal') {
-                    subtotalElement1 = item.querySelector('.review-bold-text');
+                    subtotal = valueElement?.innerText.replace(/[^\d.]/g, '') || "0";
                 } else if (label?.includes('Discount')) {
-                    discountElement1 = item.querySelector('.review-bold-text');
+                    discount = valueElement?.innerText.replace(/[^\d.]/g, '') || "0";
                 } else if (label === 'Grand Total') {
-                    grandTotalElement1 = item.querySelector('div.review-bold-text, div.review-blue-txt.review-bold-text');
+                    grandTotal = valueElement?.innerText.replace(/[^\d.]/g, '') || "0";
                 }
             });
-        
-            const subtotal = subtotalElement1?.innerText.replace(/[^\d.]/g, '') || "0";
-            const discount = discountElement1?.innerText.replace(/[^\d.]/g, '') || "0";
-            const grandTotal = grandTotalElement1?.innerText.replace(/[^\d.]/g, '') || "0";
-        
+
             console.log('Subtotal:', subtotal);
             console.log('Discount:', discount);
             console.log('Grand Total:', grandTotal);
-        
+
+
             SalesforceInteractions.sendEvent({
                 interaction: {
                     name: "Payment Method",
@@ -407,40 +405,42 @@ document.addEventListener("DOMContentLoaded", function () {
                         SubTotal: parseFloat(subtotal),
                         Discount: parseFloat(discount),
                         GrandTotal: parseFloat(grandTotal)
-                    }
+                    },
+                },
+            });
+
+
+        }
+
+        const observerpm = new MutationObserver(() => {
+            const isMyCartPage = window.location.href === "https://student.devinfinitylearn.in/subscription/proceed-to-payment";
+            if (!isMyCartPage) return;
+
+            const emiHeaders = Array.from(document.querySelectorAll(".subscrp-blue-brdbox-hdr")).map(el => el.innerText.trim());
+            const isEMISectionPresent = emiHeaders.some(text =>
+                ["Cardless EMI", "No Cost EMI", "Debit Card EMI", "Credit Card EMI"].includes(text)
+            );
+
+            if (!isEMISectionPresent) return;
+
+            const emiButtons = document.querySelectorAll('.subscrp-emi-bank-name-box');
+
+            emiButtons.forEach(btn => {
+                if (!btn.dataset.listenerAttached) {
+                    btn.addEventListener("click", handlePaymentClick);
+                    btn.dataset.listenerAttached = "true";
                 }
             });
-        }
-        
-        // Set up the observer
-        const observerpm = new MutationObserver((mutationsList) => {
-            if (window.location.href === "https://student.devinfinitylearn.in/subscription/mycart") {
-                const emiButtons = document.querySelectorAll('.subscrp-emi-bank-name-box');
-                const emimethods = document.querySelectorAll(".subscrp-blue-brdbox-hdr");
-        
-                const headerTexts = Array.from(emimethods).map((method) => method.innerText.trim());
-        
-                const isValidMethod = headerTexts.some(text =>
-                    ["Cardless EMI", "No Cost EMI", "Debit Card EMI", "Credit Card EMI"].includes(text)
-                );
-        
-                if (isValidMethod) {
-                    emiButtons.forEach((btn) => {
-                        if (!btn.hasAttribute('data-listener-attached')) {
-                            btn.addEventListener('click', handlePaymentClick);
-                            btn.setAttribute('data-listener-attached', 'true');
-                            console.log("Event listener attached to EMI button");
-                        }
-                    });
-                }
-            }
         });
-        
-        // Start observing immediately
-        observerpm.observe(document.body, { childList: true, subtree: true });
-        
-        
-        
+
+        // Start observing
+        observerpm.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+
+
+
         function firstpage() {
 
 
@@ -647,7 +647,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 listener("click", ".resendText", (event) => {
                     console.log("Resend OTP Clicked");
-                
+
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: 'Resend OTP',
@@ -716,6 +716,112 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     });
                 }),
+
+
+
+                listener("click", ".btn.CYOT-stepbtnpopup", (event) => {
+                    // Delay to wait for Step 2 and subjects to load
+                    setTimeout(() => {
+                        const stepHeading = document.querySelector('.CYOT-popup-heading');
+                        if (stepHeading && stepHeading.textContent.trim() === "Step 2") {
+                            console.log("Yes, we are on Step 2!");
+                            // Do something for Step 2
+                        } else {
+                            console.log("Not on Step 2.");
+                        }
+
+                        console.log("I'm in second page");
+
+                        const allSubjects = [];
+
+                        document.querySelectorAll('.CYOT-accorleft-tittle').forEach((subjectElement) => {
+                            const subjectName = subjectElement.textContent.trim();
+                            if (subjectName) {
+                                allSubjects.push(subjectName);
+                            }
+                        });
+
+
+
+                        console.log("All Subjects:", allSubjects);
+
+                        sessionStorage.setItem("selectedSubjects", JSON.stringify(allSubjects));
+
+                        // if (allSubjects.length > 0) {
+                        //     // Send to Salesforce
+                        //     SalesforceInteractions.sendEvent({
+                        //         interaction: {
+                        //             name: 'Create new Test',
+                        //             eventType: 'CreateYourOwnTest',
+                        //             attributes: {
+                        //                 Subjects: allSubjects.join(', '), // Add this if needed
+                        //                 Duration: "duration",
+                        //                 NoOfQuestions: "questions"
+                        //             },
+                        //         },
+                        //     });
+                        // }
+                    }, 1000); // 500ms delay — adjust as needed
+                }),
+
+
+                listener("click", ".btn.CYOT-stepbtnpopup.ng-star-inserted", (event) => {
+
+
+                    console.log("we are in step 3");
+                    // Get selected Duration
+                    let selectedDuration = "";
+                    const durationInput = document.querySelector('.CYOT-duration-wrp:nth-of-type(1) input[type="radio"]:checked');
+                    if (durationInput) {
+                        const label = durationInput.closest('label');
+                        const durationText = label.querySelector('.CYOT-dur-radiobox')?.textContent.trim() || "";
+                        selectedDuration = parseInt(durationText); // Convert to number
+                    }
+
+                    // Get selected Number of Questions
+                    let selectedQuestions = "";
+                    const questionInput = document.querySelector('.CYOT-duration-wrp:nth-of-type(2) input[type="radio"]:checked');
+                    if (questionInput) {
+                        const label = questionInput.closest('label');
+                        const questionsText = label.querySelector('.CYOT-dur-radiobox')?.textContent.trim() || "";
+                        selectedQuestions = parseInt(questionsText); // Convert to number   
+                    }
+
+                    // Log the values
+                    console.log("Selected Duration:", selectedDuration);
+                    console.log("Selected Questions:", selectedQuestions);
+
+                    const storedSubjects = JSON.parse(sessionStorage.getItem("selectedSubjects"));
+                    console.log("Subjects from sessionStorage:", storedSubjects);
+
+                    const subjectList = [];
+
+                    if (Array.isArray(storedSubjects)) {
+                        storedSubjects.forEach(subject => {
+                            subjectList.push(subject);
+                        });
+                    }
+
+                    if (storedSubjects.length > 0) {
+                        SalesforceInteractions.sendEvent({
+                            interaction: {
+                                name: 'Create new Test',
+                                eventType: 'createYourOwnTest1',
+                                attributes: {
+                                    Subjects2: storedSubjects.join(', '),
+                                    // Subjects:subjectList,
+                                    Duration2: selectedDuration,
+                                    NoOfQuestions2: selectedQuestions
+                                },
+                            },
+                        });
+                    }
+
+                }),
+
+
+
+
 
 
                 // login with otp
@@ -1010,11 +1116,10 @@ document.addEventListener("DOMContentLoaded", function () {
                             // Send captured values to SalesforceInteractions
                             SalesforceInteractions.sendEvent({
                                 interaction: {
-                                    name: 'Attempt button click',
-                                    eventType: 'CustomEvent',
+                                    name: 'Attempt button',
+                                    eventType: 'test',
                                     attributes: {
-                                        interactionName: "Attempt Button Clicked",
-                                        StudentExamName: examName,
+                                        ExamName: examName,
                                     },
                                 },
                             });
@@ -1052,10 +1157,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Send the interaction event to Salesforce with identity details
                     SalesforceInteractions.sendEvent({
                         interaction: {
-                            name: "Contact Us Button",
-                            eventType: "CustomEvent",
+                            name: "Contact Us",
+                            eventType: "contact",
                             attributes: {
-                                interactionName: "Contact Us Button Clicked",
                                 firstName: firstName,
                                 lastName: lastName,
                                 reason: reason,
@@ -1151,20 +1255,93 @@ document.addEventListener("DOMContentLoaded", function () {
             ]
         }
 
+        // document.addEventListener("click", function (event) {
+        //     if (event.target.closest(".btn.UNFAPP-blue-btn.btn-block.ng-star-inserted")) {
+        //         console.log("Watch Now button clicked");
+
+        //         // Get the parent container of the clicked button
+        //         const classContainer = event.target.closest(".UNFAPP-free-lvcls-cnt-area");
+
+        //         if (classContainer) {
+        //             const subjectName = classContainer.querySelector(".UNFAPP-subjct-title")?.innerText.trim();
+        //             const teacherName = classContainer.querySelector(".UNFAPP-subjct-subtitle")?.innerText.trim();
+        //             const classDateText = classContainer.querySelector(".UNFAPP-free-lvcls-time-row li:first-child span")?.innerText.trim(); // e.g., "20 Jun, 2024"
+        //             const classTimeText = classContainer.querySelector(".UNFAPP-free-lvcls-time-row li:nth-child(2) span")?.innerText.trim(); // e.g., "5:40 pm - 6:40 pm"
+
+        //             // Convert date & time to ISO 8601 format
+        //             let classDateTimeISO = null;
+        //             if (classDateText && classTimeText) {
+        //                 try {
+        //                     const [day, rawmonthAbbr, year] = classDateText.split(" ");
+        //                     const monthAbbr = rawmonthAbbr.replace(",", "").trim();
+        //                     const months = {
+        //                         "Jan": "01", "Feb": "02", "Mar": "03", "Apr": "04",
+        //                         "May": "05", "Jun": "06", "Jul": "07", "Aug": "08",
+        //                         "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12"
+        //                     };
+
+        //                     const month = months[monthAbbr]; // Convert month abbreviation to number
+        //                     const startTime = classTimeText.split(" - ")[0]; // Get start time (e.g., "5:40 pm")
+
+        //                     // Convert time to 24-hour format
+        //                     const timeParts = startTime.match(/(\d+):(\d+) (\w{2})/);
+        //                     if (timeParts) {
+        //                         let hours = parseInt(timeParts[1], 10);
+        //                         const minutes = timeParts[2];
+        //                         const ampm = timeParts[3].toLowerCase();
+
+        //                         if (ampm === "pm" && hours !== 12) {
+        //                             hours += 12;
+        //                         } else if (ampm === "am" && hours === 12) {
+        //                             hours = 0;
+        //                         }
+
+        //                         const formattedHours = hours.toString().padStart(2, "0"); // Ensure 2-digit format
+        //                         const formattedDate = `${year}-${month}-${day}T${formattedHours}:${minutes}:00Z`; // ISO 8601 format
+
+        //                         classDateTimeISO = formattedDate;
+        //                     }
+        //                 } catch (error) {
+        //                     console.error("Date parsing error:", error);
+        //                 }
+        //             }
+
+        //             console.log("ISO 8601 Date:", classDateTimeISO);
+
+        //             // Send event to Salesforce
+        //             SalesforceInteractions.sendEvent({
+        //                 interaction: {
+        //                     name: "Watch Now",
+        //                     eventType: "CustomEvent",
+        //                     attributes: {
+        //                         Teacher: teacherName,
+        //                         Subject: subjectName,
+        //                         ClassDate: classDateTimeISO
+        //                     }
+        //                 }
+        //             });
+        //         }
+        //     }
+        // });
+
+
         document.addEventListener("click", function (event) {
             if (event.target.closest(".btn.UNFAPP-blue-btn.btn-block.ng-star-inserted")) {
                 console.log("Watch Now button clicked");
-
-                // Get the parent container of the clicked button
+        
                 const classContainer = event.target.closest(".UNFAPP-free-lvcls-cnt-area");
-
+        
                 if (classContainer) {
                     const subjectName = classContainer.querySelector(".UNFAPP-subjct-title")?.innerText.trim();
                     const teacherName = classContainer.querySelector(".UNFAPP-subjct-subtitle")?.innerText.trim();
-                    const classDateText = classContainer.querySelector(".UNFAPP-free-lvcls-time-row li:first-child span")?.innerText.trim(); // e.g., "20 Jun, 2024"
-                    const classTimeText = classContainer.querySelector(".UNFAPP-free-lvcls-time-row li:nth-child(2) span")?.innerText.trim(); // e.g., "5:40 pm - 6:40 pm"
-
-                    // Convert date & time to ISO 8601 format
+                    const classDateText = classContainer.querySelector(".UNFAPP-free-lvcls-time-row li:first-child span")?.innerText.trim();
+                    const classTimeText = classContainer.querySelector(".UNFAPP-free-lvcls-time-row li:nth-child(2) span")?.innerText.trim();
+        
+                    console.log("Subject:", subjectName);
+                    console.log("Teacher:", teacherName);
+                    console.log("Class Date Text:", classDateText);
+                    console.log("Class Time Text:", classTimeText);
+        
                     let classDateTimeISO = null;
                     if (classDateText && classTimeText) {
                         try {
@@ -1175,36 +1352,40 @@ document.addEventListener("DOMContentLoaded", function () {
                                 "May": "05", "Jun": "06", "Jul": "07", "Aug": "08",
                                 "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12"
                             };
-
-                            const month = months[monthAbbr]; // Convert month abbreviation to number
-                            const startTime = classTimeText.split(" - ")[0]; // Get start time (e.g., "5:40 pm")
-
-                            // Convert time to 24-hour format
-                            const timeParts = startTime.match(/(\d+):(\d+) (\w{2})/);
+        
+                            const month = months[monthAbbr];
+                            console.log("Parsed Day:", day);
+                            console.log("Parsed Month:", month);
+                            console.log("Parsed Year:", year);
+        
+                            const startTime = classTimeText.split(" - ")[0];
+                            const timeParts = startTime.match(/(\d+):(\d+)\s?(am|pm)/i);
+        
                             if (timeParts) {
                                 let hours = parseInt(timeParts[1], 10);
                                 const minutes = timeParts[2];
                                 const ampm = timeParts[3].toLowerCase();
-
-                                if (ampm === "pm" && hours !== 12) {
-                                    hours += 12;
-                                } else if (ampm === "am" && hours === 12) {
-                                    hours = 0;
-                                }
-
-                                const formattedHours = hours.toString().padStart(2, "0"); // Ensure 2-digit format
-                                const formattedDate = `${year}-${month}-${day}T${formattedHours}:${minutes}:00Z`; // ISO 8601 format
-
-                                classDateTimeISO = formattedDate;
+        
+                                if (ampm === "pm" && hours !== 12) hours += 12;
+                                if (ampm === "am" && hours === 12) hours = 0;
+        
+                                const formattedHours = hours.toString().padStart(2, "0");
+                                const formattedDateStr = `${year}-${month}-${day.padStart(2, '0')}T${formattedHours}:${minutes}:00Z`;
+        
+                                console.log("Formatted UTC String:", formattedDateStr);
+        
+                                const dateObj = new Date(formattedDateStr);
+                                classDateTimeISO = dateObj.toISOString(); // With milliseconds
+        
+                                console.log("ISO 8601 Date (UTC with ms):", classDateTimeISO);
+                            } else {
+                                console.warn("Time format mismatch: ", startTime);
                             }
                         } catch (error) {
                             console.error("Date parsing error:", error);
                         }
                     }
-
-                    console.log("ISO 8601 Date:", classDateTimeISO);
-
-                    // Send event to Salesforce
+        
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: "Watch Now",
@@ -1219,7 +1400,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         });
-
+        
+        
 
         const ReportPage = {
             name: 'ReportPage',
@@ -1236,12 +1418,27 @@ document.addEventListener("DOMContentLoaded", function () {
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: 'View Report',
-                            eventType: 'CustomEvent',
+                            eventType: 'test',
                             attributes: {
                                 StudentExamName: examNamee,
                             },
                         },
                     });
+                }),
+
+
+                listener("click", ".btn.UNFAPP-asmnt-blue-hdrbtn.d-hide.ng-star-inserted", (event) => { 
+
+                    console.log("clicked the schedule")
+
+                    SalesforceInteractions.sendEvent({
+                        interaction: {
+                            name: 'ILTS Schedule',
+                            eventType: 'buttonClick',
+                            
+                        },
+                    });
+
                 }),
 
 
@@ -1357,7 +1554,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         console.log("Mobile input field not found!");
                     }
 
-                   
+
 
                     if (mobileNumber) {
                         SalesforceInteractions.sendEvent({
@@ -1562,9 +1759,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
         const StudentPage = {
             name: 'StudentDashboardPage',
             isMatch: () => /\/dashboard/.test(window.location.href),
+
 
             listeners: [
 
@@ -1588,11 +1787,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         SalesforceInteractions.sendEvent({
                             interaction: {
-                                name: "Test Selected",
-                                eventType: "CustomEvent",
+                                name: "Test Series",
+                                eventType: "test",
                                 attributes: {
-                                    interactionName: "Test Selected",
-                                    TestName: stuexamName,
+                                    ExamName: stuexamName,
                                 },
                             },
                         });
@@ -1692,9 +1890,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: 'Begin Test',
-                            eventType: 'CustomEvent',
+                            eventType: 'test',
                             attributes: {
-                                interactionName: "Student Begin Test",
                                 BeginTest: "Yes",
                             },
                         },
@@ -1709,30 +1906,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: 'Finish Test',
-                            eventType: 'CustomEvent',
+                            eventType: 'test',
                             attributes: {
-                                interactionName: "Student Finish Test",
-                                BeginTest: "Yes",
+                                FinishTest: "Yes",
                             },
                         },
                     });
 
                 }),
 
-                listener("click", ".CYOT-CYOT-testbtn", (event) => {
-                    console.log("create a new test button clicked!");
-
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: 'Create new Test',
-                            eventType: 'CustomEvent',
-                            attributes: {
-                                interactionName: "Create new Test",
-                            },
-                        },
-                    });
-
-                }),
 
 
             ],
@@ -1796,8 +1978,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         console.log("Sending event to Salesforce...");
 
-                        function generateUniqueId() {
-                            return `id_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
+                        // function generateUniqueId() {
+                        //     return `id_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
+                        // }
+
+                        function generateUUID() {
+                            return crypto.randomUUID();
                         }
 
                         SalesforceInteractions.sendEvent({
@@ -1807,7 +1993,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                     // PackageName : packageName,
                                     price: parseFloat(packagePrice),
                                     catalogObjectType: "Product",
-                                    catalogObjectId: generateUniqueId(),
+                                    catalogObjectId: generateUUID(),
                                     quantity: 1,
 
                                     attributes: {
@@ -1920,9 +2106,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 user: {
                                     attributes: {
                                         postalCode: pincode,
-                                        //eventType: 'contactPointAddress',
-                                        eventType: 'identity',
-                                        isAnonymous: '0',
+                                        eventType: 'contactPointAddress',
                                     },
                                 },
                             });
@@ -1972,6 +2156,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         let lineItems = [];
 
+                        function generateUUID() {
+                            return crypto.randomUUID();
+                        }
+
                         packages.forEach((pkg, index) => {
                             const packageName = pkg.querySelector(".SUBCRP-cart-package-name")?.innerText.trim();
                             const validTill = pkg.querySelector(".SUBCRP-package-validity.mt-2")?.innerText.replace("Valid till:", "").trim() || "N/A";
@@ -1993,7 +2181,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                             lineItems.push({
                                 catalogObjectType: "Product",
-                                catalogObjectId: `product-${index + 1}`,
+                                catalogObjectId: generateUUID(),
                                 quantity: 1,
                                 price: parseFloat(price1),
                                 attributes: {
@@ -2003,18 +2191,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                             });
 
-                            // SalesforceInteractions.sendEvent({
-                            //     interaction: {
-                            //         name: 'package name captured', //change this to actual event name
-                            //         eventType: 'CustomEvent',
-                            //         attributes: {
-                            //             PackageName: packageName,
-                            //             StartDate: startDatec,
-                            //             ValidTill: validTillc,
-                            //             SubTotal: parseFloat(subtotal),
-                            //         },
-                            //     },
-                            // });
+                           
 
                         });
 
@@ -2053,15 +2230,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-                        // SalesforceInteractions.sendEvent({
-                        //     interaction: {
-                        //         name: 'checkout',
-                        //         eventType: 'CustomEvent',
-                        //         attributes: {
-                        //             Quantity: arraylength,
-                        //         },
-                        //     },
-                        // });
+                  
 
 
                     }
@@ -2197,129 +2366,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-        // const PaymentCapture = {
-        //     name: "Payment Status",
-        //     isMatch: () => /\/subscription\/payementVerification/.test(window.location.href),
-        //     paymentCaptured: false,  // New flag to avoid double capture
-
-        //     observePaymentStatus: function () {
-        //         console.log("PaymentCapture started");
-
-        //         const capturePaymentStatus = () => {
-        //             if (PaymentCapture.paymentCaptured) return;  // Don't capture twice
-
-        //             const successElement = document.querySelector(".section-heading");
-
-        //             function generateUniqueId() {
-        //                 return `id_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
-        //             }
-
-        //             // Payment Success Logic
-        //             if (successElement && successElement.innerText.includes("Congratulation")) {
-        //                 const name = successElement.innerText.replace("Congratulation, ", "").replace("!", "").trim();
-
-        //                 const text = document.querySelector(".section-subheading.sm")?.innerText || "";
-
-        //                 const container = document.querySelector('.center-heading-area');
-
-        //                 let capturedAmount = "0.00";
-
-        //                 if (container) {
-        //                     const text1 = container.innerText;
-        //                     console.log("Full Text:", text);
-
-        //                     // Match amount like 38,415.02 (with or without ₹ symbol)
-        //                     const amountMatch = text1.match(/(?:₹\s*)?([\d,]+\.\d{1,2})/);
-        //                     capturedAmount = amountMatch ? amountMatch[1].replace(/,/g, '') : "0.00";
-
-        //                     console.log("Captured Amount:", capturedAmount);  // Output: 38415.02
-        //                 }
-
-
-
-        //                 PaymentCapture.paymentCaptured = true;  // Prevent re-trigger
-        //                 console.log(`Payment Success - Name: ${name}, Amount: ${capturedAmount}`);
-
-        //                 // PaymentCapture.handlePaymentCaptured("Success", successAmount);
-
-        //                 SalesforceInteractions.sendEvent({
-        //                     interaction: {
-        //                         name: "Payment status",
-        //                         eventType: "payment",
-        //                         attributes: {
-        //                             PaymentStatus: "Congratulations"
-        //                         }
-        //                     }
-        //                 });
-
-                        
-        //                 PaymentCapture.disconnectObserver();
-        //                 return;
-        //             }
-
-        //             const failureElement = document.querySelector('.SUBCRP-pymnt-fail-error-msg');
-
-        //             // Payment Failure Logic
-        //             if (failureElement && failureElement.innerText.toLowerCase().includes('failed')) {
-        //                 const failureText = failureElement.innerText;
-
-        //                 const container = document.querySelector('.center-heading-area');
-        //                 const text = container?.innerText || "";
-
-        //                 // Regex to capture amount with or without ₹ symbol
-        //                 const amountMatch = text.match(/(?:₹\s*)?([\d,]+\.\d+)/);
-
-        //                 // Extract amount and remove commas
-        //                 const capturedAmount = amountMatch ? amountMatch[1].replace(/,/g, '') : "0.00";
-
-        //                 // Just log it nicely
-        //                 console.log(`Captured Amount: Rs. ${capturedAmount}`);
-
-        //                 // PaymentCapture.handlePaymentCaptured("Failed", failedAmount);
-
-        //                 SalesforceInteractions.sendEvent({
-        //                     interaction: {
-        //                         name: "Payment status captured",
-        //                         eventType: "payment",
-        //                         attributes: {
-        //                             PaymentStatus: "Failed"
-        //                         }
-        //                     }
-        //                 });
-                       
-
-        //                 PaymentCapture.disconnectObserver();
-        //                 return;
-        //             }
-
-        //             console.log("Payment status not detected yet");
-        //         };
-
-        //         // Run capture immediately
-        //         capturePaymentStatus();
-
-        //         // Set up observer for dynamically loaded content
-        //         this.observer = new MutationObserver(capturePaymentStatus);
-        //         this.observer.observe(document.body, { childList: true, subtree: true });
-        //     },
-
-        //     // handlePaymentCaptured: function (status, amount) {
-        //     //     console.log(`Payment Captured - Status: ${status}, Amount: ₹${amount}`);
-        //     //      Additional logic like analytics or tracking can go here if needed.
-        //     // },
-
-        //     disconnectObserver: function () {
-        //         if (this.observer) {
-        //             this.observer.disconnect();
-        //             console.log("Observer disconnected to avoid double capture");
-        //         }
-        //     }
-        // };
-
-        // // Start capturing if on correct page
-        // if (PaymentCapture.isMatch()) {
-        //     PaymentCapture.observePaymentStatus();
-        // }
+        
 
 
         const DoubtsPage = {
@@ -2403,7 +2450,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         SalesforceInteractions.sendEvent({
                             interaction: {
                                 name: 'Chapter',
-                                eventType: 'CustomEvent',
+                                eventType: 'selfLearn',
                                 attributes: {
                                     Subject: subject,
                                     ChapterName: chapterName
@@ -2478,142 +2525,52 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
 
-        //tab trcaker
+
+
+       
+
+
+
+
 
         // if (!window.__tabTrackerAttached) {
         //     window.__tabTrackerAttached = true;
-        
-        //     const pageLoadTime = new Date();
-        //     let lastBlurTime = null;
-        //     let focusEventCount = 0;
-        //     let blurTimeout = null;
-        //     let lastKnownState = document.hasFocus() ? 'focused' : 'blurred';
-        //     let hasUserFocused = document.hasFocus();
-        
-        //     function convertUTCToIST(utcStr) {
-        //         const utcDate = new Date(utcStr);
-        //         const istOffset = 5.5 * 60 * 60 * 1000;
-        //         const istDate = new Date(utcDate.getTime() + istOffset);
-        //         return istDate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-        //     }
-        
-        //     window.addEventListener("blur", () => {
-        //         const now = new Date();
-        //         const timeSinceLoad = now - pageLoadTime;
-        
-        //         if (!hasUserFocused || timeSinceLoad < 1000) {
-        //             console.log("Ignored blur: tab not focused yet or blur too early.");
-        //             return;
-        //         }
-        
-        //         blurTimeout = setTimeout(() => {
-        //             const utcTime = now.toISOString();
-        //             const istTime = convertUTCToIST(utcTime);
-        
-        //             lastBlurTime = now;
-        //             lastKnownState = 'blurred';
-        
-        //             console.log("Tab abandoned at (UTC):", utcTime);
-        //             console.log("Tab abandoned at (IST):", istTime);
-        
-        //             if (window.SalesforceInteractions) {
-        //                 SalesforceInteractions.sendEvent({
-        //                     interaction: {
-        //                         name: 'Tab Abandoned',
-        //                         eventType: 'CustomEvent',
-        //                         attributes: {
-        //                             state: 'abandoned',
-        //                             timestamp: utcTime,
-        //                             path: window.location.pathname
-        //                         }
-        //                     }
-        //                 });
-        //             }
-        //         }, 200);
-        //     });
-        
-        //     window.addEventListener("focus", () => {
-        //         hasUserFocused = true;
-        
-        //         if (blurTimeout) {
-        //             clearTimeout(blurTimeout);
-        //             blurTimeout = null;
-        //         }
-        
-        //         const now = new Date();
-        //         const utcTime = now.toISOString();
-        //         const istTime = convertUTCToIST(utcTime);
-        //         const timeAway = lastBlurTime ? Math.round((now - lastBlurTime) / 1000) : 0;
-        
-        //         if (lastKnownState !== 'focused' && focusEventCount < 10) {
-        //             console.log("Tab focused at (UTC):", utcTime, `| Time away: ${timeAway}s`);
-        //             console.log("Tab focused at (IST):", istTime);
-        
-        //             if (window.SalesforceInteractions) {
-        //                 SalesforceInteractions.sendEvent({
-        //                     interaction: {
-        //                         name: 'Tab Focused',
-        //                         eventType: 'CustomEvent',
-        //                         attributes: {
-        //                             state: 'focused',
-        //                             timestamp: utcTime,
-        //                             path: window.location.pathname,
-        //                             timeAwayInSeconds: timeAway
-        //                         }
-        //                     }
-        //                 });
-        //             }
-        
-        //             focusEventCount++;
-        //             lastKnownState = 'focused';
-        //         }
-        
-        //         lastBlurTime = null;
-        //     });
-        // }
-        
-        //working tab activity
 
-        // if (!window.__tabTrackerAttached) {
-        //     window.__tabTrackerAttached = true;
-        
         //     const pageLoadTime = new Date();
         //     let lastHiddenTime = null;
         //     let focusEventCount = 0;
         //     let hasUserInteracted = document.visibilityState === 'visible';
-        
+
         //     function convertUTCToIST(utcStr) {
         //         const utcDate = new Date(utcStr);
-        //         const istOffset = 5.5 * 60 * 60 * 1000;
-        //         const istDate = new Date(utcDate.getTime() + istOffset);
-        //         return istDate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
+        //         return utcDate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
         //     }
-        
+
         //     document.addEventListener('visibilitychange', function () {
         //         const now = new Date();
         //         const utcTime = now.toISOString();
         //         const istTime = convertUTCToIST(utcTime);
         //         const timeSinceLoad = now - pageLoadTime;
-        
+
         //         if (document.visibilityState === 'hidden') {
         //             if (!hasUserInteracted || timeSinceLoad < 1000) {
         //                 console.log("Ignored hidden event: too early or no interaction.");
         //                 return;
         //             }
-        
+
         //             lastHiddenTime = now;
         //             console.log('User has switched to another tab (UTC):', utcTime);
         //             console.log('User has switched to another tab (IST):', istTime);
-        
+
         //             if (window.SalesforceInteractions) {
         //                 SalesforceInteractions.sendEvent({
         //                     interaction: {
         //                         name: 'Tab Abandoned',
-        //                         eventType: 'CustomEvent',
+        //                         eventType: 'tabTracker',
         //                         attributes: {
-        //                             state: 'abandoned',
-        //                             timestamp: utcTime,
-        //                             path: window.location.pathname
+        //                             Tabstate: 'abandoned',
+        //                             TimeStamp: utcTime,
+        //                             Url: window.location.pathname
         //                         }
         //                     }
         //                 });
@@ -2621,112 +2578,39 @@ document.addEventListener("DOMContentLoaded", function () {
         //         } else if (document.visibilityState === 'visible') {
         //             hasUserInteracted = true;
         //             const timeAway = lastHiddenTime ? Math.round((now - lastHiddenTime) / 1000) : 0;
-        
+
         //             if (focusEventCount < 10) {
         //                 console.log('User is back on the tab (UTC):', utcTime, `| Time away: ${timeAway}s`);
         //                 console.log('User is back on the tab (IST):', istTime);
-        
+
         //                 if (window.SalesforceInteractions) {
         //                     SalesforceInteractions.sendEvent({
         //                         interaction: {
         //                             name: 'Tab Focused',
-        //                             eventType: 'CustomEvent',
+        //                             eventType: 'tabTracker',
         //                             attributes: {
-        //                                 state: 'focused',
-        //                                 timestamp: utcTime,
-        //                                 path: window.location.pathname,
-        //                                 timeAwayInSeconds: timeAway
+        //                                 Tabstate: 'focused',
+        //                                 TimeStamp: utcTime,
+        //                                 Url: window.location.pathname,
+        //                                 TimeAway1: timeAway
         //                             }
         //                         }
         //                     });
         //                 }
-        
+
         //                 focusEventCount++;
         //             }
-        
+
         //             lastHiddenTime = null;
         //         }
         //     });
         // }
-        
 
 
-        if (!window.__tabTrackerAttached) {
-            window.__tabTrackerAttached = true;
-        
-            const pageLoadTime = new Date();
-            let lastHiddenTime = null;
-            let focusEventCount = 0;
-            let hasUserInteracted = document.visibilityState === 'visible';
-        
-            function convertUTCToIST(utcStr) {
-                const utcDate = new Date(utcStr);
-                return utcDate.toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
-            }
-        
-            document.addEventListener('visibilitychange', function () {
-                const now = new Date();
-                const utcTime = now.toISOString();
-                const istTime = convertUTCToIST(utcTime);
-                const timeSinceLoad = now - pageLoadTime;
-        
-                if (document.visibilityState === 'hidden') {
-                    if (!hasUserInteracted || timeSinceLoad < 1000) {
-                        console.log("Ignored hidden event: too early or no interaction.");
-                        return;
-                    }
-        
-                    lastHiddenTime = now;
-                    console.log('User has switched to another tab (UTC):', utcTime);
-                    console.log('User has switched to another tab (IST):', istTime);
-        
-                    if (window.SalesforceInteractions) {
-                        SalesforceInteractions.sendEvent({
-                            interaction: {
-                                name: 'Tab Abandoned',
-                                eventType: 'tabTracker',
-                                attributes: {
-                                    Tabstate: 'abandoned',
-                                    TimeStamp: utcTime,
-                                    Url: window.location.pathname
-                                }
-                            }
-                        });
-                    }
-                } else if (document.visibilityState === 'visible') {
-                    hasUserInteracted = true;
-                    const timeAway = lastHiddenTime ? Math.round((now - lastHiddenTime) / 1000) : 0;
-        
-                    if (focusEventCount < 10) {
-                        console.log('User is back on the tab (UTC):', utcTime, `| Time away: ${timeAway}s`);
-                        console.log('User is back on the tab (IST):', istTime);
-        
-                        if (window.SalesforceInteractions) {
-                            SalesforceInteractions.sendEvent({
-                                interaction: {
-                                    name: 'Tab Focused',
-                                    eventType: 'tabTracker',
-                                    attributes: {
-                                        Tabstate: 'focused',
-                                        TimeStamp: utcTime,
-                                        Url: window.location.pathname,
-                                        TimeAway1: timeAway
-                                    }
-                                }
-                            });
-                        }
-        
-                        focusEventCount++;
-                    }
-        
-                    lastHiddenTime = null;
-                }
-            });
-        }
-        
-        
-            
-        
+
+
+
+
         const pageTypeDefault = {
             name: 'default'
         }
