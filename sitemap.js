@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     }).then(() => {
         // set the log level during sitemap development to see potential problems
-        console.log('Salesforce Interactions WEB SDK is ready');
+        console.log('Salesforce Interactions WEB SDK is okkk ready');
         SalesforceInteractions.setLoggingLevel('DEBUG');
 
 
@@ -137,53 +137,157 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // Function to execute when on the View Test Report page
+
         function executeViewTestReport() {
             setTimeout(() => {
-
                 const examNameElement = document.querySelector('.UNFAPP-hdng.UNFAPP-main-hdng');
                 const stuexamName = examNameElement ? examNameElement.textContent.trim() : 'Exam name not found';
 
-                console.log("Exam Name:", stuexamName);
-                //  sessionStorage.setItem("ExamName", stuexamName);
                 const elements = document.querySelectorAll('.UNFAPP-cunt.UNFAPP-elips');
-                console.log("Checking elements for View Report");
 
-                // If there are enough elements, proceed with extracting data
+                let tttRaw, ttt = "00.00", accuracy = "0", avgtime = "0", rawScore, score = "0", totalScore = "0";
+
                 if (elements.length >= 5) {
-                    // const totaltt = elements[0].textContent.trim();
-                    // console.log("Total Time Taken:", totaltt);
+                    tttRaw = elements[1].textContent.trim();
 
-                    const ttt = elements[1].textContent.trim();
-                    console.log("TTT:", ttt);
+                    // Convert "4m 19s" -> "04.19"
+                    const timeMatch = tttRaw.match(/(\d+)\s*m\s*(\d+)\s*s/);
+                    if (timeMatch) {
+                        const mins = timeMatch[1].toString().padStart(2, '0');
+                        const secs = timeMatch[2].toString().padStart(2, '0');
+                        ttt = `${mins}.${secs}`;
+                    }
 
-                    const accuracy = elements[2].textContent.trim();
-                    console.log("Accuracy:", accuracy);
+                    accuracy = elements[2].textContent.trim().replace('%', '') || "0";
+                    avgtime = elements[3].textContent.trim().replace(/[^\d.]/g, '') || "0";
 
-                    const avgtime = elements[3].textContent.trim();
-                    console.log("Avg. Time per Question:", avgtime);
-
-                    const score = elements[4].textContent.trim();
-                    console.log("Score:", score);
-
-                    // Send collected data to Salesforce
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: 'Student Report',
-                            eventType: 'test',
-                            attributes: {
-                                Score: score,
-                                TimeTaken: ttt,
-                                ExamName: stuexamName,   //change here
-                                Accuracy: accuracy,
-                                AvgTimePerQuestion: avgtime,
-                            },
-                        },
-                    });
-                } else {
-                    console.log("Not enough elements found for View Report.");
+                    rawScore = elements[4].textContent.trim();
+                    const scoreParts = rawScore.split('/');
+                    if (scoreParts.length === 2) {
+                        score = scoreParts[0].trim();
+                        totalScore = scoreParts[1].trim();
+                    }
                 }
-            }, 500);  // Allowing some time for elements to load before extracting data
+
+                // Extract Correct and Incorrect
+                const infoBoxes = document.querySelectorAll('.UNFAPP-scr-infobx.lstview');
+                let correct = "0";
+                let incorrect = "0";
+
+                infoBoxes.forEach(box => {
+                    const label = box.querySelector('.scr-info-titl')?.textContent.toLowerCase();
+                    const value = box.querySelector('.scr-info-cunt')?.textContent.trim().split('/')[0].trim();
+
+                    if (label?.includes("correct") && !label.includes("in")) {
+                        correct = value;
+                    } else if (label?.includes("incorrect")) {
+                        incorrect = value;
+                    }
+                });
+
+                console.log("Correct:", correct);
+                console.log("Incorrect:", incorrect);
+                console.log("Score:", score);
+                console.log("Total Score:", totalScore);
+                console.log("Accuracy (no %):", accuracy);
+                console.log("Time Taken (mm.ss):", ttt);
+                console.log("AvgTimePerQuestion:", avgtime);
+
+                // Send to Salesforce
+                SalesforceInteractions.sendEvent({
+                    interaction: {
+                        name: 'Student Report',
+                        eventType: 'test',
+                        attributes: {
+                            ExamName: stuexamName,
+                            Score: parseFloat(score),
+                            TotalScore: parseFloat(totalScore),
+                            TimeTaken: parseFloat(ttt),
+                            Accuracy: parseFloat(accuracy),
+                            AvgTimePerQuestion: parseFloat(avgtime),
+                            Correct: correct,
+                            Incorrect: incorrect
+                        }
+                    }
+                });
+
+            }, 500);
         }
+
+
+
+
+        // function executeViewTestReport() {
+        //     setTimeout(() => {
+        //         const examNameElement = document.querySelector('.UNFAPP-hdng.UNFAPP-main-hdng');
+        //         const stuexamName = examNameElement ? examNameElement.textContent.trim() : 'Exam name not found';
+
+        //         console.log("Exam Name:", stuexamName);
+
+        //         const elements = document.querySelectorAll('.UNFAPP-cunt.UNFAPP-elips');
+        //         console.log("Checking elements for View Report");
+
+        //         let ttt, accuracy, avgtime, rawScore, score = null, totalScore = null;
+        //         if (elements.length >= 5) {
+        //             ttt = elements[1].textContent.trim();
+        //             accuracy = elements[2].textContent.trim().replace('%', '');  // Remove the '%' symbol
+        //             avgtime = elements[3].textContent.trim();
+        //             rawScore = elements[4].textContent.trim();
+
+        //             // Split score into Score and TotalScore
+        //             const scoreParts = rawScore.split('/');
+        //             if (scoreParts.length === 2) {
+        //                 score = scoreParts[0].trim();
+        //                 totalScore = scoreParts[1].trim();
+        //             }
+        //         }
+
+        //         // Extract Correct and Incorrect
+        //         const infoBoxes = document.querySelectorAll('.UNFAPP-scr-infobx.lstview');
+        //         let correct = null;
+        //         let incorrect = null;
+
+        //         infoBoxes.forEach(box => {
+        //             const label = box.querySelector('.scr-info-titl')?.textContent.toLowerCase();
+        //             const value = box.querySelector('.scr-info-cunt')?.textContent.trim().split('/')[0].trim();
+
+        //             if (label.includes("correct") && !label.includes("in")) {
+        //                 correct = value;
+        //             } else if (label.includes("incorrect")) {
+        //                 incorrect = value;
+        //             }
+        //         });
+
+        //         console.log("Correct:", correct);
+        //         console.log("Incorrect:", incorrect);
+        //         console.log("Score:", score);
+        //         console.log("Total Score:", totalScore);
+        //         console.log("Accuracy (no %):", accuracy);
+
+        //         // Send collected data to Salesforce
+        //         SalesforceInteractions.sendEvent({
+        //             interaction: {
+        //                 name: 'Student Report',
+        //                 eventType: 'test',
+        //                 attributes: {
+        //                     ExamName: stuexamName,
+        //                     Score: score,
+        //                     TotalScore: totalScore,
+        //                     TimeTaken: ttt,
+        //                     Accuracy: accuracy,
+        //                     AvgTimePerQuestion: avgtime,
+        //                     Correct: correct,
+        //                     Incorrect: incorrect
+        //                 }
+        //             }
+        //         });
+        //     }, 500);
+        // }
+
+
+
+
+
 
 
         function selectedpm() {
@@ -1096,7 +1200,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 // }),
 
 
-                listener("click", ".UNFAPP-asmnt-upcmn-link.attmp-btn.UNFAPP-gpbtn-cyot", (event) => {
+                // listener("click", ".UNFAPP-asmnt-upcmn-link.attmp-btn.UNFAPP-gpbtn-cyot", (event) => {
+                listener("click", ".UNFAPP-asmnt-upcmn-link.attmp-btn.UNFAPP-gpbtn-cyot.Attempt.now.ng-star-inserted", (event) => {
                     console.log("Attempt Now button clicked!");
 
                     // Capture the button text
@@ -1328,20 +1433,20 @@ document.addEventListener("DOMContentLoaded", function () {
         document.addEventListener("click", function (event) {
             if (event.target.closest(".btn.UNFAPP-blue-btn.btn-block.ng-star-inserted")) {
                 console.log("Watch Now button clicked");
-        
+
                 const classContainer = event.target.closest(".UNFAPP-free-lvcls-cnt-area");
-        
+
                 if (classContainer) {
                     const subjectName = classContainer.querySelector(".UNFAPP-subjct-title")?.innerText.trim();
                     const teacherName = classContainer.querySelector(".UNFAPP-subjct-subtitle")?.innerText.trim();
                     const classDateText = classContainer.querySelector(".UNFAPP-free-lvcls-time-row li:first-child span")?.innerText.trim();
                     const classTimeText = classContainer.querySelector(".UNFAPP-free-lvcls-time-row li:nth-child(2) span")?.innerText.trim();
-        
+
                     console.log("Subject:", subjectName);
                     console.log("Teacher:", teacherName);
                     console.log("Class Date Text:", classDateText);
                     console.log("Class Time Text:", classTimeText);
-        
+
                     let classDateTimeISO = null;
                     if (classDateText && classTimeText) {
                         try {
@@ -1352,31 +1457,31 @@ document.addEventListener("DOMContentLoaded", function () {
                                 "May": "05", "Jun": "06", "Jul": "07", "Aug": "08",
                                 "Sep": "09", "Oct": "10", "Nov": "11", "Dec": "12"
                             };
-        
+
                             const month = months[monthAbbr];
                             console.log("Parsed Day:", day);
                             console.log("Parsed Month:", month);
                             console.log("Parsed Year:", year);
-        
+
                             const startTime = classTimeText.split(" - ")[0];
                             const timeParts = startTime.match(/(\d+):(\d+)\s?(am|pm)/i);
-        
+
                             if (timeParts) {
                                 let hours = parseInt(timeParts[1], 10);
                                 const minutes = timeParts[2];
                                 const ampm = timeParts[3].toLowerCase();
-        
+
                                 if (ampm === "pm" && hours !== 12) hours += 12;
                                 if (ampm === "am" && hours === 12) hours = 0;
-        
+
                                 const formattedHours = hours.toString().padStart(2, "0");
                                 const formattedDateStr = `${year}-${month}-${day.padStart(2, '0')}T${formattedHours}:${minutes}:00Z`;
-        
+
                                 console.log("Formatted UTC String:", formattedDateStr);
-        
+
                                 const dateObj = new Date(formattedDateStr);
                                 classDateTimeISO = dateObj.toISOString(); // With milliseconds
-        
+
                                 console.log("ISO 8601 Date (UTC with ms):", classDateTimeISO);
                             } else {
                                 console.warn("Time format mismatch: ", startTime);
@@ -1385,7 +1490,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             console.error("Date parsing error:", error);
                         }
                     }
-        
+
                     SalesforceInteractions.sendEvent({
                         interaction: {
                             name: "Watch Now",
@@ -1400,34 +1505,34 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         });
-        
-        
+
+
 
         const ReportPage = {
             name: 'ReportPage',
             isMatch: () => /\/testlist/.test(window.location.href),
 
             listeners: [
-                listener("click", ".UNFAPP-asmnt-upcmn-link.attmp-btn.UNFAPP-gpbtn-cyot.ng-star-inserted", (event) => {
-                    console.log("View Report got clicked!");
-                    const nameElement = document.querySelector('.h3-asmnt-upcmng-hdng');
-                    const examNamee = nameElement ? nameElement.textContent.trim() : 'Not Found';
-                    console.log("examNamee", examNamee);
-                    console.log("Title:", examNamee);
+                // listener("click", ".UNFAPP-asmnt-upcmn-link.attmp-btn.UNFAPP-gpbtn-cyot.ng-star-inserted", (event) => {
+                //     console.log("View Report got clicked!");
+                //     const nameElement = document.querySelector('.h3-asmnt-upcmng-hdng');
+                //     const examNamee = nameElement ? nameElement.textContent.trim() : 'Not Found';
+                //     console.log("examNamee", examNamee);
+                //     console.log("Title:", examNamee);
 
-                    SalesforceInteractions.sendEvent({
-                        interaction: {
-                            name: 'View Report',
-                            eventType: 'test',
-                            attributes: {
-                                StudentExamName: examNamee,
-                            },
-                        },
-                    });
-                }),
+                //     SalesforceInteractions.sendEvent({
+                //         interaction: {
+                //             name: 'View Report',
+                //             eventType: 'test',
+                //             attributes: {
+                //                 ExamName: examNamee,
+                //             },
+                //         },
+                //     });
+                // }),
 
 
-                listener("click", ".btn.UNFAPP-asmnt-blue-hdrbtn.d-hide.ng-star-inserted", (event) => { 
+                listener("click", ".btn.UNFAPP-asmnt-blue-hdrbtn.d-hide.ng-star-inserted", (event) => {
 
                     console.log("clicked the schedule")
 
@@ -1435,7 +1540,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         interaction: {
                             name: 'ILTS Schedule',
                             eventType: 'buttonClick',
-                            
+
                         },
                     });
 
@@ -2191,7 +2296,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                             });
 
-                           
+
 
                         });
 
@@ -2230,7 +2335,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-                  
+
 
 
                     }
@@ -2366,7 +2471,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-        
+
 
 
         const DoubtsPage = {
@@ -2527,7 +2632,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-       
+
 
 
 
